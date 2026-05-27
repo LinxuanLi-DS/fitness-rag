@@ -7,10 +7,10 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.rag_pipeline import ask
+from api.routers.users import router as users_router
 
 app = FastAPI(title="FitRAG API", version="1.0.0")
 
-# 允许跨域（小程序调用需要）
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,14 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 注册路由
+app.include_router(users_router)
 
-# 请求格式
+
 class ChatRequest(BaseModel):
     query: str
     user_profile: Optional[dict] = None
 
 
-# 响应格式
 class ChatResponse(BaseModel):
     answer: str
 
