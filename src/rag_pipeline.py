@@ -57,7 +57,13 @@ def build_prompt(query: str, foods: list, exercises: list, user_profile: dict = 
 
 用户问题：{query}
 
-请给出专业、友好的回答："""
+回答要求：
+- 简单问候或闲聊：简短友好回应，1-2句话即可
+- 具体健身/饮食问题：给出详细专业的建议，包括具体数据、步骤和注意事项
+- 方案制定类问题（如"给我一个计划"）：结构化详细回答，分步骤说明
+- 原则：该详细时详细，该简短时简短，像真正的私人教练一样自然对话
+
+请回答："""
 
 
 def ask(query: str, user_profile: dict = None):
