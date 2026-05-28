@@ -163,6 +163,135 @@ select option { background: #2d1033; }
 .send-btn { width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(255,107,157,0.3); }
 .send-btn:hover { transform: scale(1.05); }
 .send-btn:active { transform: scale(0.95); }
+
+/* 性别专属卡片 */
+.gender-card {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, rgba(255,107,157,0.12), rgba(196,77,255,0.08));
+  border: 1.5px solid rgba(255,107,157,0.3); border-radius: 16px;
+  padding: 14px 16px; cursor: pointer; transition: all 0.25s;
+}
+.gender-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,107,157,0.2); }
+.gender-card-icon { font-size: 28px; flex-shrink: 0; }
+.gender-card-info { flex: 1; }
+.gender-card-title { color: #fff; font-size: 14px; font-weight: 600; }
+.gender-card-desc { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 2px; }
+.gender-card-arrow { color: var(--accent); font-size: 20px; font-weight: 300; }
+
+/* 经期面板 Modal */
+.period-panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  z-index: 300; display: none; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.period-panel-overlay.open { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.period-panel {
+  background: linear-gradient(135deg, #1a0a1e, #2d1033);
+  border: 1px solid rgba(255,150,180,0.25); border-radius: 24px;
+  width: 560px; max-height: 85vh; overflow-y: auto; padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.pp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.pp-header h2 { color: #fff; font-size: 20px; }
+.pp-close { background: rgba(255,255,255,0.08); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+
+/* 周期可视化 */
+.pp-cycle-ring {
+  width: 180px; height: 180px; margin: 0 auto 20px; position: relative;
+  border-radius: 50%; background: conic-gradient(
+    #ff6b9d 0% 18%, #4ade80 18% 46%, #fbbf24 46% 57%, #60a5fa 57% 75%, #c084fc 75% 100%
+  );
+  display: flex; align-items: center; justify-content: center;
+}
+.pp-cycle-inner {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: linear-gradient(135deg, #1a0a1e, #2d1033);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.pp-cycle-day { color: #fff; font-size: 32px; font-weight: 700; }
+.pp-cycle-label { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 2px; }
+.pp-cycle-dot {
+  position: absolute; width: 12px; height: 12px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--accent); box-shadow: 0 0 8px rgba(255,107,157,0.6);
+}
+
+/* 阶段指示器 */
+.pp-phases { display: flex; gap: 6px; margin-bottom: 20px; }
+.pp-phase {
+  flex: 1; text-align: center; padding: 8px 4px; border-radius: 10px;
+  font-size: 10px; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.04);
+  transition: all 0.2s;
+}
+.pp-phase.active { color: #fff; font-weight: 600; }
+.pp-phase.p-period.active { background: rgba(255,107,157,0.2); color: #ff6b9d; }
+.pp-phase.p-follicular.active { background: rgba(74,222,128,0.2); color: #4ade80; }
+.pp-phase.p-ovulation.active { background: rgba(251,191,36,0.2); color: #fbbf24; }
+.pp-phase.p-luteal-early.active { background: rgba(96,165,250,0.2); color: #60a5fa; }
+.pp-phase.p-luteal.active { background: rgba(192,132,252,0.2); color: #c084fc; }
+
+/* 建议卡片 */
+.pp-advice {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,150,180,0.15);
+  border-radius: 14px; padding: 16px; margin-bottom: 16px;
+}
+.pp-advice-title { color: var(--accent); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.pp-advice-item { color: rgba(255,255,255,0.7); font-size: 12px; line-height: 1.8; }
+.pp-advice-item::before { content: "• "; color: var(--accent); }
+
+/* 快捷操作 */
+.pp-actions { display: flex; gap: 10px; margin-bottom: 16px; }
+.pp-action-btn {
+  flex: 1; padding: 12px; border-radius: 12px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: all 0.2s;
+}
+.pp-action-btn.primary { background: linear-gradient(135deg, #ff6b9d, #c44dff); color: #fff; }
+.pp-action-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,157,0.3); }
+.pp-action-btn.secondary { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,150,180,0.2); }
+.pp-action-btn.secondary:hover { border-color: var(--accent); }
+
+/* 日历 */
+.pp-calendar { margin-bottom: 16px; }
+.pp-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.pp-cal-title { color: #fff; font-size: 14px; font-weight: 600; }
+.pp-cal-nav { background: rgba(255,255,255,0.08); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px; }
+.pp-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.pp-cal-day-label { text-align: center; color: rgba(255,255,255,0.3); font-size: 10px; padding: 4px; }
+.pp-cal-day {
+  text-align: center; padding: 6px 2px; border-radius: 8px; font-size: 12px;
+  color: rgba(255,255,255,0.6); cursor: default; transition: all 0.15s;
+}
+.pp-cal-day.empty { visibility: hidden; }
+.pp-cal-day.today { color: #fff; font-weight: 700; border: 1px solid var(--accent); }
+.pp-cal-day.period { background: rgba(255,107,157,0.25); color: #ff6b9d; }
+.pp-cal-day.predicted { background: rgba(255,107,157,0.1); color: rgba(255,107,157,0.5); border: 1px dashed rgba(255,107,157,0.3); }
+.pp-cal-day.follicular { background: rgba(74,222,128,0.1); color: #4ade80; }
+.pp-cal-day.ovulation { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.pp-cal-day.luteal { background: rgba(192,132,252,0.1); color: #c084fc; }
+
+/* 统计 */
+.pp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.pp-stat {
+  background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; text-align: center;
+}
+.pp-stat-value { color: #fff; font-size: 20px; font-weight: 700; }
+.pp-stat-label { color: rgba(255,255,255,0.4); font-size: 10px; margin-top: 4px; }
+
+/* 历史列表 */
+.pp-history-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 14px; margin-bottom: 6px;
+}
+.pp-history-dates { color: rgba(255,255,255,0.8); font-size: 12px; }
+.pp-history-dur { color: rgba(255,255,255,0.4); font-size: 11px; }
+.pp-history-del { background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 12px; padding: 4px; }
+
+/* 训练记录面板（男性） */
+.workout-panel .pp-cycle-ring {
+  background: conic-gradient(#3b82f6 0% 60%, rgba(255,255,255,0.1) 60% 100%);
+}
 </style>
 </head>
 <body>
@@ -365,20 +494,26 @@ select option { background: #2d1033; }
       <input type="text" id="dietary" placeholder="如：有糖尿病、膝盖受伤...">
     </div>
     
-    <!-- 经期记录模块 -->
-    <div class="section-title">🌸 经期记录</div>
-    <div class="field-group">
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px" onclick="recordPeriodStart()">记录开始</button>
-        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px" onclick="recordPeriodEnd()">记录结束</button>
+    <!-- 性别专属大模块入口 -->
+    <div id="genderModuleEntry">
+      <!-- 女性：经期管理 -->
+      <div id="femaleModule" class="gender-card" onclick="openPeriodPanel()">
+        <div class="gender-card-icon">🌸</div>
+        <div class="gender-card-info">
+          <div class="gender-card-title">经期管理</div>
+          <div class="gender-card-desc" id="periodMiniStatus">点击查看详情</div>
+        </div>
+        <div class="gender-card-arrow">›</div>
       </div>
-      <div id="periodStatus" style="background:rgba(255,107,157,0.08);border:1px solid rgba(255,107,157,0.2);border-radius:8px;padding:10px;font-size:11px;color:rgba(255,255,255,0.7)">
-        加载中...
+      <!-- 男性：训练记录 -->
+      <div id="maleModule" class="gender-card" onclick="openWorkoutPanel()" style="display:none">
+        <div class="gender-card-icon">💪</div>
+        <div class="gender-card-info">
+          <div class="gender-card-title">训练记录</div>
+          <div class="gender-card-desc" id="workoutMiniStatus">点击查看详情</div>
+        </div>
+        <div class="gender-card-arrow">›</div>
       </div>
-      <details style="margin-top:8px">
-        <summary style="font-size:11px;color:var(--accent);cursor:pointer">查看历史记录</summary>
-        <div id="periodHistory" style="margin-top:8px;max-height:150px;overflow-y:auto;font-size:11px"></div>
-      </details>
     </div>
   </div>
 
@@ -1153,7 +1288,216 @@ async function loadProfileFromServer() {
   }
 }
 
-// ===== 经期记录功能 =====
+// ===== 性别模块切换 =====
+function updateGenderModule() {
+  const isFemale = currentGender === "female";
+  document.getElementById("femaleModule").style.display = isFemale ? "flex" : "none";
+  document.getElementById("maleModule").style.display = isFemale ? "none" : "flex";
+  // 更新迷你状态
+  if (isFemale) updatePeriodMiniStatus();
+  else updateWorkoutMiniStatus();
+}
+
+// ===== 经期面板 =====
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+let periodData = null; // 缓存的预测数据
+let periodRecords = []; // 缓存的历史记录
+
+function openPeriodPanel() {
+  document.getElementById("periodPanelOverlay").classList.add("open");
+  loadPeriodPanelData();
+}
+function closePeriodPanel() {
+  document.getElementById("periodPanelOverlay").classList.remove("open");
+}
+
+async function loadPeriodPanelData() {
+  if (!token) return;
+  try {
+    // 加载预测
+    const predRes = await fetch(`${API}/period/predict`, { headers: { "Authorization": `Bearer ${token}` } });
+    periodData = await predRes.json();
+    
+    // 加载历史
+    const histRes = await fetch(`${API}/period/history`, { headers: { "Authorization": `Bearer ${token}` } });
+    const histData = await histRes.json();
+    periodRecords = histData.records || [];
+    
+    // 加载统计
+    const statsRes = await fetch(`${API}/period/stats`, { headers: { "Authorization": `Bearer ${token}` } });
+    const statsData = await statsRes.json();
+    
+    renderPeriodPanel(periodData, periodRecords, statsData);
+  } catch(e) {
+    console.log("[period] 加载失败:", e);
+  }
+}
+
+function renderPeriodPanel(pred, records, stats) {
+  // 周期环
+  if (pred.can_predict) {
+    document.getElementById("ppCycleDay").textContent = pred.current_cycle_day;
+    // 更新阶段高亮
+    const phases = document.querySelectorAll(".pp-phase");
+    phases.forEach(p => p.classList.remove("active"));
+    const phaseMap = { "经期": "p-period", "卵泡期": "p-follicular", "排卵期": "p-ovulation", "黄体早期": "p-luteal-early", "黄体期": "p-luteal" };
+    const activeEl = document.querySelector(`.${phaseMap[pred.current_phase]}`);
+    if (activeEl) activeEl.classList.add("active");
+    
+    // 建议内容
+    const adviceMap = {
+      "经期": [
+        "避免高强度训练，可选择散步、瑜伽",
+        "多喝温水，吃温热食物",
+        "补充铁质（红肉、菠菜）",
+        "保证充足睡眠"
+      ],
+      "卵泡期": [
+        "精力充沛期，适合高强度训练",
+        "代谢旺盛，减脂黄金期",
+        "多补充蛋白质和复合碳水",
+        "可以尝试新的训练动作"
+      ],
+      "排卵期": [
+        "状态最佳，适合挑战PR",
+        "注意补充蛋白质和水分",
+        "适合团队运动和竞技",
+        "体温略升，注意散热"
+      ],
+      "黄体早期": [
+        "状态稳定，保持规律运动",
+        "适当增加碳水摄入",
+        "注意补充钙和镁",
+        "保持充足睡眠"
+      ],
+      "黄体期": [
+        "可能情绪波动，选择舒缓运动",
+        "适合瑜伽、拉伸、散步",
+        "少盐防水肿，多吃富含B6的食物",
+        "注意保暖，避免冷饮"
+      ]
+    };
+    const advice = adviceMap[pred.current_phase] || [];
+    document.getElementById("ppAdviceContent").innerHTML = advice.map(a => `<div class="pp-advice-item">${a}</div>`).join("");
+  } else {
+    document.getElementById("ppCycleDay").textContent = "--";
+    document.getElementById("ppAdviceContent").innerHTML = '<div class="pp-advice-item">记录至少2次完整经期后，即可查看个性化建议和预测</div>';
+  }
+  
+  // 统计
+  if (stats.avg_cycle_length) {
+    document.getElementById("ppAvgCycle").textContent = stats.avg_cycle_length;
+    document.getElementById("ppAvgDuration").textContent = stats.avg_duration || "--";
+  }
+  if (pred.next_predicted_start) {
+    const parts = pred.next_predicted_start.split("-");
+    document.getElementById("ppNextDate").textContent = `${parseInt(parts[1])}/${parseInt(parts[2])}`;
+  }
+  
+  // 日历
+  renderCalendar();
+  
+  // 历史列表
+  if (records.length === 0) {
+    document.getElementById("ppHistoryList").innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:12px;padding:8px">暂无记录，点击「今天经期开始」来记录</div>';
+  } else {
+    document.getElementById("ppHistoryList").innerHTML = records.map(r => `
+      <div class="pp-history-item">
+        <div>
+          <div class="pp-history-dates">${r.start_date} → ${r.end_date || '<span style="color:#fbbf24">进行中</span>'}</div>
+          <div class="pp-history-dur">${r.duration ? r.duration + '天' : ''}</div>
+        </div>
+        <button class="pp-history-del" onclick="deletePeriodRecord(${r.id})">✕</button>
+      </div>
+    `).join("");
+  }
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("ppCalGrid");
+  const title = document.getElementById("ppCalTitle");
+  title.textContent = `${calYear}年${calMonth + 1}月`;
+  
+  const dayLabels = ["日", "一", "二", "三", "四", "五", "六"];
+  let html = dayLabels.map(d => `<div class="pp-cal-day-label">${d}</div>`).join("");
+  
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+  
+  // 空白填充
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="pp-cal-day empty"></div>';
+  }
+  
+  // 构建日期查找表
+  const periodDays = new Set();
+  const predictedDays = new Set();
+  const phaseDays = {};
+  
+  if (periodRecords) {
+    periodRecords.forEach(r => {
+      if (r.end_date) {
+        const start = new Date(r.start_date);
+        const end = new Date(r.end_date);
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          periodDays.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`);
+        }
+      } else {
+        // 进行中
+        const start = new Date(r.start_date);
+        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+          periodDays.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`);
+        }
+      }
+    });
+  }
+  
+  // 预测经期日期
+  if (periodData && periodData.can_predict && periodData.next_predicted_start) {
+    const nextStart = new Date(periodData.next_predicted_start);
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(nextStart);
+      d.setDate(d.getDate() + i);
+      predictedDays.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`);
+    }
+  }
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    let cls = "pp-cal-day";
+    if (dateStr === todayStr) cls += " today";
+    if (periodDays.has(dateStr)) cls += " period";
+    else if (predictedDays.has(dateStr)) cls += " predicted";
+    html += `<div class="${cls}">${day}</div>`;
+  }
+  
+  grid.innerHTML = html;
+}
+
+function changeCalMonth(delta) {
+  calMonth += delta;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+async function updatePeriodMiniStatus() {
+  if (!token) return;
+  try {
+    const res = await fetch(`${API}/period/predict`, { headers: { "Authorization": `Bearer ${token}` } });
+    const data = await res.json();
+    const el = document.getElementById("periodMiniStatus");
+    if (data.can_predict) {
+      el.textContent = `${data.current_phase} · 第${data.current_cycle_day}天`;
+    } else {
+      el.textContent = "点击记录经期";
+    }
+  } catch(e) {}
+}
+
 async function recordPeriodStart() {
   if (!token) { showToast("请先登录"); return; }
   const today = new Date().toISOString().split('T')[0];
@@ -1165,29 +1509,19 @@ async function recordPeriodStart() {
     });
     const data = await res.json();
     showToast(data.message || "✅ 已记录经期开始");
-    loadPeriodStatus();
-    loadPeriodHistory();
-  } catch(e) {
-    showToast("❌ 记录失败");
-  }
+    loadPeriodPanelData();
+    updatePeriodMiniStatus();
+  } catch(e) { showToast("❌ 记录失败"); }
 }
 
 async function recordPeriodEnd() {
   if (!token) { showToast("请先登录"); return; }
   const today = new Date().toISOString().split('T')[0];
   try {
-    // 获取最近的未结束记录
-    const histRes = await fetch(`${API}/period/history`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
+    const histRes = await fetch(`${API}/period/history`, { headers: { "Authorization": `Bearer ${token}` } });
     const histData = await histRes.json();
     const openRecords = histData.records.filter(r => !r.end_date);
-    
-    if (openRecords.length === 0) {
-      showToast("⚠️ 没有未结束的经期记录");
-      return;
-    }
-    
+    if (openRecords.length === 0) { showToast("⚠️ 没有未结束的经期记录"); return; }
     const record = openRecords[0];
     const res = await fetch(`${API}/period/record/${record.id}`, {
       method: "PUT",
@@ -1196,99 +1530,220 @@ async function recordPeriodEnd() {
     });
     const data = await res.json();
     showToast(data.message || "✅ 已记录经期结束");
-    loadPeriodStatus();
-    loadPeriodHistory();
-  } catch(e) {
-    showToast("❌ 记录失败");
-  }
-}
-
-async function loadPeriodStatus() {
-  if (!token) {
-    document.getElementById("periodStatus").innerHTML = "请先登录查看";
-    return;
-  }
-  try {
-    const res = await fetch(`${API}/period/predict`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const data = await res.json();
-    
-    if (!data.can_predict) {
-      document.getElementById("periodStatus").innerHTML = data.message || "需要至少2条完整记录才能预测";
-      return;
-    }
-    
-    const phaseColors = {
-      "经期": "#ff6b9d",
-      "卵泡期": "#4ade80", 
-      "排卵期": "#fbbf24",
-      "黄体早期": "#60a5fa",
-      "黄体期": "#c084fc"
-    };
-    const color = phaseColors[data.current_phase] || "#fff";
-    
-    document.getElementById("periodStatus").innerHTML = `
-      <div style="margin-bottom:6px"><strong style="color:${color}">${data.current_phase}</strong> · 第${data.current_cycle_day}天</div>
-      <div style="margin-bottom:4px">${data.phase_description}</div>
-      <div style="color:var(--accent);font-size:10px">下次经期: ${data.next_predicted_start} (${data.days_until_next > 0 ? data.days_until_next + '天后' : '今天或已过'})</div>
-    `;
-  } catch(e) {
-    document.getElementById("periodStatus").innerHTML = "加载失败";
-  }
-}
-
-async function loadPeriodHistory() {
-  if (!token) return;
-  try {
-    const res = await fetch(`${API}/period/history`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const data = await res.json();
-    const records = data.records || [];
-    
-    if (records.length === 0) {
-      document.getElementById("periodHistory").innerHTML = "<div style='color:rgba(255,255,255,0.4)'>暂无记录</div>";
-      return;
-    }
-    
-    document.getElementById("periodHistory").innerHTML = records.map(r => `
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:6px 8px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="color:rgba(255,255,255,0.8)">${r.start_date} → ${r.end_date || '<span style="color:#fbbf24">进行中</span>'}</div>
-          <div style="color:rgba(255,255,255,0.4);font-size:10px">${r.duration ? r.duration + '天' : ''}</div>
-        </div>
-        <button onclick="deletePeriodRecord(${r.id})" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:12px">✕</button>
-      </div>
-    `).join("");
-  } catch(e) {
-    document.getElementById("periodHistory").innerHTML = "加载失败";
-  }
+    loadPeriodPanelData();
+    updatePeriodMiniStatus();
+  } catch(e) { showToast("❌ 记录失败"); }
 }
 
 async function deletePeriodRecord(id) {
   if (!confirm("确定删除这条记录？")) return;
   try {
-    await fetch(`${API}/period/record/${id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
+    await fetch(`${API}/period/record/${id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${token}` } });
     showToast("✅ 已删除");
-    loadPeriodStatus();
-    loadPeriodHistory();
-  } catch(e) {
-    showToast("❌ 删除失败");
+    loadPeriodPanelData();
+    updatePeriodMiniStatus();
+  } catch(e) { showToast("❌ 删除失败"); }
+}
+
+// ===== 训练记录面板（男性）=====
+function openWorkoutPanel() {
+  document.getElementById("workoutPanelOverlay").classList.add("open");
+  renderWorkoutPanel();
+}
+function closeWorkoutPanel() {
+  document.getElementById("workoutPanelOverlay").classList.remove("open");
+}
+
+function getWorkoutLog() {
+  const username = document.getElementById("mainUsername").textContent;
+  const data = localStorage.getItem(`workout_${username}`);
+  return data ? JSON.parse(data) : [];
+}
+
+function saveWorkoutLog(log) {
+  const username = document.getElementById("mainUsername").textContent;
+  localStorage.setItem(`workout_${username}`, JSON.stringify(log));
+}
+
+function logWorkout(type) {
+  const log = getWorkoutLog();
+  const today = new Date().toISOString().split('T')[0];
+  log.unshift({ date: today, type, time: new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'}) });
+  saveWorkoutLog(log);
+  showToast(`✅ 已记录${type}`);
+  renderWorkoutPanel();
+  updateWorkoutMiniStatus();
+}
+
+function renderWorkoutPanel() {
+  const log = getWorkoutLog();
+  const today = new Date();
+  const thisWeekStart = new Date(today);
+  thisWeekStart.setDate(today.getDate() - today.getDay());
+  
+  const thisWeek = log.filter(r => new Date(r.date) >= thisWeekStart).length;
+  const thisMonth = log.filter(r => { const d = new Date(r.date); return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear(); }).length;
+  
+  document.getElementById("workoutCount").textContent = thisWeek;
+  document.getElementById("workoutMonth").textContent = thisMonth;
+  document.getElementById("workoutTotal").textContent = log.length;
+  
+  // 连续打卡
+  let streak = 0;
+  const dateSet = new Set(log.map(r => r.date));
+  for (let d = new Date(today); ; d.setDate(d.getDate() - 1)) {
+    const ds = d.toISOString().split('T')[0];
+    if (dateSet.has(ds)) streak++;
+    else break;
+  }
+  document.getElementById("workoutStreak").textContent = streak;
+  
+  // 更新环
+  const pct = Math.min(thisWeek / 5 * 100, 100);
+  document.getElementById("workoutRing").style.background = `conic-gradient(#3b82f6 0% ${pct}%, rgba(255,255,255,0.1) ${pct}% 100%)`;
+  
+  // 历史
+  if (log.length === 0) {
+    document.getElementById("workoutHistoryList").innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:12px;padding:8px">暂无训练记录</div>';
+  } else {
+    document.getElementById("workoutHistoryList").innerHTML = log.slice(0, 10).map(r => `
+      <div class="pp-history-item">
+        <div>
+          <div class="pp-history-dates">${r.date} ${r.type}</div>
+          <div class="pp-history-dur">${r.time}</div>
+        </div>
+      </div>
+    `).join("");
   }
 }
+
+function updateWorkoutMiniStatus() {
+  const log = getWorkoutLog();
+  const today = new Date();
+  const thisWeekStart = new Date(today);
+  thisWeekStart.setDate(today.getDate() - today.getDay());
+  const thisWeek = log.filter(r => new Date(r.date) >= thisWeekStart).length;
+  document.getElementById("workoutMiniStatus").textContent = thisWeek > 0 ? `本周训练 ${thisWeek} 次` : "点击记录训练";
+}
+
+// 性别切换时更新模块
+const origSetGender = setGender;
+setGender = function(g) {
+  origSetGender(g);
+  updateGenderModule();
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
   updateBMI();
   switchAssistant(currentAssistant);
-  loadPeriodStatus();
-  loadPeriodHistory();
+  updateGenderModule();
 });
 </script>
+
+<!-- 经期管理大面板 -->
+<div class="period-panel-overlay" id="periodPanelOverlay" onclick="if(event.target===this)closePeriodPanel()">
+  <div class="period-panel" id="periodPanel">
+    <div class="pp-header">
+      <h2>🌸 经期管理</h2>
+      <button class="pp-close" onclick="closePeriodPanel()">✕</button>
+    </div>
+
+    <!-- 周期环 -->
+    <div class="pp-cycle-ring" id="ppCycleRing">
+      <div class="pp-cycle-inner">
+        <div class="pp-cycle-day" id="ppCycleDay">--</div>
+        <div class="pp-cycle-label">周期第几天</div>
+      </div>
+      <div class="pp-cycle-dot" id="ppCycleDot" style="display:none"></div>
+    </div>
+
+    <!-- 阶段指示器 -->
+    <div class="pp-phases" id="ppPhases">
+      <div class="pp-phase p-period">经期<br>1-5天</div>
+      <div class="pp-phase p-follicular">卵泡期<br>6-13天</div>
+      <div class="pp-phase p-ovulation">排卵期<br>14-16天</div>
+      <div class="pp-phase p-luteal-early">黄体早期<br>17-21天</div>
+      <div class="pp-phase p-luteal">黄体期<br>22-28天</div>
+    </div>
+
+    <!-- 当前建议 -->
+    <div class="pp-advice" id="ppAdvice">
+      <div class="pp-advice-title">📋 当前阶段建议</div>
+      <div id="ppAdviceContent">
+        <div class="pp-advice-item">记录至少2次完整经期后，即可查看个性化建议</div>
+      </div>
+    </div>
+
+    <!-- 快捷操作 -->
+    <div class="pp-actions">
+      <button class="pp-action-btn primary" onclick="recordPeriodStart()">🔴 今天经期开始</button>
+      <button class="pp-action-btn secondary" onclick="recordPeriodEnd()">✅ 今天经期结束</button>
+    </div>
+
+    <!-- 统计 -->
+    <div class="pp-stats" id="ppStats">
+      <div class="pp-stat"><div class="pp-stat-value" id="ppAvgCycle">--</div><div class="pp-stat-label">平均周期(天)</div></div>
+      <div class="pp-stat"><div class="pp-stat-value" id="ppAvgDuration">--</div><div class="pp-stat-label">平均经期(天)</div></div>
+      <div class="pp-stat"><div class="pp-stat-value" id="ppNextDate">--</div><div class="pp-stat-label">下次经期</div></div>
+    </div>
+
+    <!-- 日历 -->
+    <div class="pp-calendar">
+      <div class="pp-cal-header">
+        <button class="pp-cal-nav" onclick="changeCalMonth(-1)">‹</button>
+        <div class="pp-cal-title" id="ppCalTitle"></div>
+        <button class="pp-cal-nav" onclick="changeCalMonth(1)">›</button>
+      </div>
+      <div class="pp-cal-grid" id="ppCalGrid"></div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div style="margin-top:12px">
+      <div class="pp-advice-title">📅 历史记录</div>
+      <div id="ppHistoryList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 训练记录面板（男性） -->
+<div class="period-panel-overlay" id="workoutPanelOverlay" onclick="if(event.target===this)closeWorkoutPanel()">
+  <div class="period-panel workout-panel">
+    <div class="pp-header">
+      <h2>💪 训练记录</h2>
+      <button class="pp-close" onclick="closeWorkoutPanel()">✕</button>
+    </div>
+
+    <!-- 本周统计环 -->
+    <div class="pp-cycle-ring" id="workoutRing">
+      <div class="pp-cycle-inner">
+        <div class="pp-cycle-day" id="workoutCount">0</div>
+        <div class="pp-cycle-label">本周训练次数</div>
+      </div>
+    </div>
+
+    <div class="pp-stats">
+      <div class="pp-stat"><div class="pp-stat-value" id="workoutStreak">0</div><div class="pp-stat-label">连续打卡(天)</div></div>
+      <div class="pp-stat"><div class="pp-stat-value" id="workoutMonth">0</div><div class="pp-stat-label">本月训练</div></div>
+      <div class="pp-stat"><div class="pp-stat-value" id="workoutTotal">0</div><div class="pp-stat-label">累计训练</div></div>
+    </div>
+
+    <div class="pp-advice">
+      <div class="pp-advice-title">🏋️ 快速记录</div>
+      <div class="pp-actions" style="margin-bottom:0">
+        <button class="pp-action-btn primary" onclick="logWorkout('力量训练')">🏋️ 力量训练</button>
+        <button class="pp-action-btn secondary" onclick="logWorkout('有氧运动')">🏃 有氧运动</button>
+        <button class="pp-action-btn secondary" onclick="logWorkout('拉伸恢复')">🧘 拉伸恢复</button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="pp-advice-title">📅 最近训练</div>
+      <div id="workoutHistoryList"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
