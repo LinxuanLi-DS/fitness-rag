@@ -66,6 +66,38 @@ def record_period(
         return {"message": "经期记录已保存", "id": record.id}
 
 
+@router.put("/record/{record_id}")
+def update_period_record(
+    record_id: int,
+    data: dict,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """更新经期记录（如记录结束日期）"""
+    if not current_user:
+        raise HTTPException(status_code=401, detail="请先登录")
+
+    record = db.query(PeriodRecord).filter(
+        PeriodRecord.id == record_id,
+        PeriodRecord.user_id == current_user.id
+    ).first()
+
+    if not record:
+        raise HTTPException(status_code=404, detail="记录不存在")
+
+    # 更新字段
+    if "end_date" in data:
+        record.end_date = date.fromisoformat(data["end_date"]) if data["end_date"] else None
+    if "symptoms" in data:
+        record.symptoms = json.dumps(data["symptoms"], ensure_ascii=False)
+    if "notes" in data:
+        record.notes = data["notes"]
+
+    db.commit()
+    db.refresh(record)
+    return {"message": "记录已更新", "id": record.id}
+
+
 @router.get("/history")
 def get_period_history(
     current_user=Depends(get_current_user),
