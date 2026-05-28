@@ -38,6 +38,12 @@ class User(Base):
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    # 确保经期记录表也被创建
+    try:
+        from api.models.period import PeriodRecord
+        Base.metadata.create_all(bind=engine)
+    except Exception:
+        pass
 
 
 def get_db():

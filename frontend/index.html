@@ -364,6 +364,22 @@ select option { background: #2d1033; }
     <div class="field-group"><div class="field-label">其他备注</div>
       <input type="text" id="dietary" placeholder="如：有糖尿病、膝盖受伤...">
     </div>
+    
+    <!-- 经期记录模块 -->
+    <div class="section-title">🌸 经期记录</div>
+    <div class="field-group">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px" onclick="recordPeriodStart()">记录开始</button>
+        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px" onclick="recordPeriodEnd()">记录结束</button>
+      </div>
+      <div id="periodStatus" style="background:rgba(255,107,157,0.08);border:1px solid rgba(255,107,157,0.2);border-radius:8px;padding:10px;font-size:11px;color:rgba(255,255,255,0.7)">
+        加载中...
+      </div>
+      <details style="margin-top:8px">
+        <summary style="font-size:11px;color:var(--accent);cursor:pointer">查看历史记录</summary>
+        <div id="periodHistory" style="margin-top:8px;max-height:150px;overflow-y:auto;font-size:11px"></div>
+      </details>
+    </div>
   </div>
 
   <!-- 聊天区 -->
@@ -1137,10 +1153,140 @@ async function loadProfileFromServer() {
   }
 }
 
+// ===== 经期记录功能 =====
+async function recordPeriodStart() {
+  if (!token) { showToast("请先登录"); return; }
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    const res = await fetch(`${API}/period/record`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ start_date: today })
+    });
+    const data = await res.json();
+    showToast(data.message || "✅ 已记录经期开始");
+    loadPeriodStatus();
+    loadPeriodHistory();
+  } catch(e) {
+    showToast("❌ 记录失败");
+  }
+}
+
+async function recordPeriodEnd() {
+  if (!token) { showToast("请先登录"); return; }
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    // 获取最近的未结束记录
+    const histRes = await fetch(`${API}/period/history`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const histData = await histRes.json();
+    const openRecords = histData.records.filter(r => !r.end_date);
+    
+    if (openRecords.length === 0) {
+      showToast("⚠️ 没有未结束的经期记录");
+      return;
+    }
+    
+    const record = openRecords[0];
+    const res = await fetch(`${API}/period/record/${record.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ start_date: record.start_date, end_date: today })
+    });
+    const data = await res.json();
+    showToast(data.message || "✅ 已记录经期结束");
+    loadPeriodStatus();
+    loadPeriodHistory();
+  } catch(e) {
+    showToast("❌ 记录失败");
+  }
+}
+
+async function loadPeriodStatus() {
+  if (!token) {
+    document.getElementById("periodStatus").innerHTML = "请先登录查看";
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/period/predict`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await res.json();
+    
+    if (!data.can_predict) {
+      document.getElementById("periodStatus").innerHTML = data.message || "需要至少2条完整记录才能预测";
+      return;
+    }
+    
+    const phaseColors = {
+      "经期": "#ff6b9d",
+      "卵泡期": "#4ade80", 
+      "排卵期": "#fbbf24",
+      "黄体早期": "#60a5fa",
+      "黄体期": "#c084fc"
+    };
+    const color = phaseColors[data.current_phase] || "#fff";
+    
+    document.getElementById("periodStatus").innerHTML = `
+      <div style="margin-bottom:6px"><strong style="color:${color}">${data.current_phase}</strong> · 第${data.current_cycle_day}天</div>
+      <div style="margin-bottom:4px">${data.phase_description}</div>
+      <div style="color:var(--accent);font-size:10px">下次经期: ${data.next_predicted_start} (${data.days_until_next > 0 ? data.days_until_next + '天后' : '今天或已过'})</div>
+    `;
+  } catch(e) {
+    document.getElementById("periodStatus").innerHTML = "加载失败";
+  }
+}
+
+async function loadPeriodHistory() {
+  if (!token) return;
+  try {
+    const res = await fetch(`${API}/period/history`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await res.json();
+    const records = data.records || [];
+    
+    if (records.length === 0) {
+      document.getElementById("periodHistory").innerHTML = "<div style='color:rgba(255,255,255,0.4)'>暂无记录</div>";
+      return;
+    }
+    
+    document.getElementById("periodHistory").innerHTML = records.map(r => `
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:6px 8px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="color:rgba(255,255,255,0.8)">${r.start_date} → ${r.end_date || '<span style="color:#fbbf24">进行中</span>'}</div>
+          <div style="color:rgba(255,255,255,0.4);font-size:10px">${r.duration ? r.duration + '天' : ''}</div>
+        </div>
+        <button onclick="deletePeriodRecord(${r.id})" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:12px">✕</button>
+      </div>
+    `).join("");
+  } catch(e) {
+    document.getElementById("periodHistory").innerHTML = "加载失败";
+  }
+}
+
+async function deletePeriodRecord(id) {
+  if (!confirm("确定删除这条记录？")) return;
+  try {
+    await fetch(`${API}/period/record/${id}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    showToast("✅ 已删除");
+    loadPeriodStatus();
+    loadPeriodHistory();
+  } catch(e) {
+    showToast("❌ 删除失败");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
   updateBMI();
   switchAssistant(currentAssistant);
+  loadPeriodStatus();
+  loadPeriodHistory();
 });
 </script>
 </body>
