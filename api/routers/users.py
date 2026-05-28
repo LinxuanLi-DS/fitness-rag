@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from jose import jwt
 from datetime import datetime, timedelta
@@ -12,9 +13,10 @@ from api.models.schemas import UserRegister, UserLogin, UserProfileUpdate, UserO
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-SECRET_KEY = os.getenv("SECRET_KEY", "fitrag-secret-2024")
+SECRET_KEY=os.getenv("SECRET_KEY", "fitrag-secret-2024")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7天
+security = HTTPBearer(auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -63,6 +65,51 @@ def update_profile(data: UserProfileUpdate, user_id: int, db: Session = Depends(
 
 @router.get("/profile/{user_id}", response_model=UserOut)
 def get_profile(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    return user
+
+
+@router.put("/save-profile", response_model=UserOut)
+def save_profile(
+    data: UserProfileUpdate,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """用JWT认证保存用户档案（侧栏保存按钮调用）"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="请先登录")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+    except:
+        raise HTTPException(status_code=401, detail="登录已过期，请重新登录")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+
+    for field, value in data.model_dump(exclude_none=True).items():
+        setattr(user, field, value)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.get("/me", response_model=UserOut)
+def get_me(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """获取当前登录用户的档案"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="未登录")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+    except:
+        raise HTTPException(status_code=401, detail="登录已过期")
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")

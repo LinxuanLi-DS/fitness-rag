@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>女性健身健康管理 · 小调查</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  background: linear-gradient(135deg, #fdf2f8, #fce7f3, #fbcfe8);
+  min-height: 100vh; padding: 20px; color: #4a2040;
+}
+.container {
+  max-width: 480px; margin: 0 auto; padding: 24px;
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(20px);
+  border-radius: 24px; box-shadow: 0 8px 32px rgba(180,80,130,0.15);
+}
+h1 { font-size: 22px; text-align: center; color: #be185d; margin-bottom: 4px; }
+.subtitle { text-align: center; font-size: 13px; color: #9d6b8a; margin-bottom: 24px; }
+.q-block { margin-bottom: 22px; }
+.q-title { font-size: 14px; font-weight: 600; color: #831843; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.q-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: linear-gradient(135deg, #ec4899, #a855f7); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.option-group { display: flex; flex-direction: column; gap: 8px; }
+.option {
+  display: flex; align-items: center; gap: 10px;
+  background: #fdf4ff; border: 1.5px solid #f5d0e0; border-radius: 12px;
+  padding: 10px 14px; cursor: pointer; transition: all 0.2s; font-size: 13px;
+}
+.option:hover { border-color: #ec4899; background: #fce7f3; }
+.option.selected { border-color: #ec4899; background: linear-gradient(135deg, #fce7f3, #fdf2f8); box-shadow: 0 2px 8px rgba(236,72,153,0.15); }
+.option input { display: none; }
+.check {
+  width: 18px; height: 18px; border-radius: 4px; border: 2px solid #d4a0c0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.option.selected .check { background: #ec4899; border-color: #ec4899; }
+.option.selected .check::after { content: "✓"; color: #fff; font-size: 11px; font-weight: 700; }
+.radio .check { border-radius: 50%; }
+.option.selected.radio .check::after { content: ""; width: 8px; height: 8px; background: #fff; border-radius: 50%; }
+.other-input {
+  flex: 1; background: transparent; border: none; border-bottom: 1px dashed #d4a0c0;
+  color: #831843; font-size: 13px; padding: 2px 4px; outline: none;
+}
+.other-input::placeholder { color: #c9a0b8; }
+textarea.q-textarea {
+  width: 100%; background: #fdf4ff; border: 1.5px solid #f5d0e0; border-radius: 12px;
+  padding: 12px 14px; font-size: 13px; color: #831843; resize: none;
+  min-height: 80px; outline: none; font-family: inherit;
+}
+textarea.q-textarea:focus { border-color: #ec4899; }
+.submit-btn {
+  width: 100%; padding: 14px; background: linear-gradient(135deg, #ec4899, #a855f7);
+  border: none; border-radius: 14px; color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; box-shadow: 0 4px 15px rgba(236,72,153,0.3);
+  transition: all 0.2s; margin-top: 8px;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(236,72,153,0.4); }
+.submit-btn:active { transform: scale(0.98); }
+.thanks {
+  display: none; text-align: center; padding: 40px 20px;
+}
+.thanks h2 { color: #be185d; font-size: 20px; margin-bottom: 8px; }
+.thanks p { color: #9d6b8a; font-size: 14px; line-height: 1.8; }
+.thanks .emoji { font-size: 48px; margin-bottom: 12px; }
+.progress { text-align: center; font-size: 11px; color: #c9a0b8; margin-top: 12px; }
+.tag { display: inline-block; background: #fce7f3; color: #be185d; font-size: 11px; padding: 3px 8px; border-radius: 20px; margin: 2px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="formContainer">
+  <h1>🌸 女性健身健康管理</h1>
+  <p class="subtitle">小调查 · 大约需要2分钟 · 感谢你的时间 💕</p>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">1</span>你现在用什么app记录经期？</div>
+    <div class="option-group" data-type="radio" data-name="q1">
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>美柚</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>大姨妈</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>苹果健康</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>手机自带日历</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>不记录</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>其他</span><input class="other-input" placeholder="请填写" onclick="event.stopPropagation()"></div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">2</span>你对现有经期app最不满意的是什么？</div>
+    <div class="option-group" data-type="checkbox" data-name="q2">
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>广告太多太烦</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>功能太复杂，只想简单记录</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>预测不准</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>没有健身/饮食建议</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>界面不好看</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>要充会员才能用核心功能</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>其他</span><input class="other-input" placeholder="请填写" onclick="event.stopPropagation()"></div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">3</span>你希望app能根据经期阶段给你什么提醒？</div>
+    <div class="option-group" data-type="checkbox" data-name="q3">
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>快来经期了，注意保暖</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>排卵期到了（备孕相关）</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>今天适合做什么运动</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>今天推荐吃什么</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>情绪调节建议</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>皮肤状态提醒</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>不需要提醒</span></div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">4</span>你愿意每天记录哪些数据？</div>
+    <div class="option-group" data-type="checkbox" data-name="q4">
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>经期开始/结束</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>症状（痛经/头痛/情绪等）</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>体重</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>运动内容</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>饮食/热量</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>睡眠时间</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>喝水量</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>心情</span></div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">5</span>你觉得"经期管理 + AI健身指导"这个组合怎么样？</div>
+    <div class="option-group" data-type="radio" data-name="q5">
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>很有用，正好需要</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>还行，看具体功能</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>一般，感觉用不上</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>没用，直接用ChatGPT问就行</span></div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">6</span>相比直接问ChatGPT/豆包，你觉得专属app的优势应该是？</div>
+    <div class="option-group" data-type="checkbox" data-name="q6">
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>记得我的身体数据，不用每次重复说</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>根据经期自动调整建议</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>能记录体重/运动曲线</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>拍照就能算热量</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>主动提醒我，不用我去问</span></div>
+      <div class="option" onclick="toggleCheck(this)"><div class="check"></div><span>有社区可以交流</span></div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">7</span>你最大的健身/健康管理痛点是什么？</div>
+    <div class="option-group">
+      <textarea class="q-textarea" id="q7text" placeholder="随便说，比如：不知道经期该不该运动、减脂总是反弹、不知道吃什么..."></textarea>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-block">
+    <div class="q-title"><span class="q-num">8</span>你的年龄段？</div>
+    <div class="option-group" data-type="radio" data-name="q8">
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>18岁以下</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>18-24岁</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>25-30岁</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>31-40岁</span></div>
+      <div class="option radio" onclick="selectRadio(this)"><div class="check"></div><span>40岁以上</span></div>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="submitSurvey()">提交问卷 💕</button>
+  <div class="progress">匿名填写 · 大约2分钟 · 数据仅用于产品改进</div>
+</div>
+
+<!-- 感谢页 -->
+<div class="container thanks" id="thanksPage">
+  <div class="emoji">🌸</div>
+  <h2>感谢你的参与！</h2>
+  <p>你的反馈对我们非常重要<br>我们会认真对待每一份回答<br>做出真正好用的产品 💕</p>
+</div>
+
+<script>
+function selectRadio(el) {
+  const group = el.closest(".option-group");
+  group.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+  el.classList.add("selected");
+}
+
+function toggleCheck(el) {
+  el.classList.toggle("selected");
+}
+
+function getRadioValue(name) {
+  const el = document.querySelector(`[data-name="${name}"] .option.selected span:first-of-type`);
+  if (!el) return "";
+  let val = el.textContent;
+  // 检查是否有其他输入
+  const input = el.parentElement.querySelector(".other-input");
+  if (input && input.value) val += ": " + input.value;
+  return val;
+}
+
+function getCheckboxValues(name) {
+  const selected = document.querySelectorAll(`[data-name="${name}"] .option.selected`);
+  return [...selected].map(el => {
+    let val = el.querySelector("span").textContent;
+    const input = el.querySelector(".other-input");
+    if (input && input.value) val += ": " + input.value;
+    return val;
+  });
+}
+
+async function submitSurvey() {
+  const data = {
+    q1_period_app: getRadioValue("q1"),
+    q2_dissatisfaction: getCheckboxValues("q2"),
+    q3_reminders: getCheckboxValues("q3"),
+    q4_willing_to_track: getCheckboxValues("q4"),
+    q5_combo_opinion: getRadioValue("q5"),
+    q6_app_advantage: getCheckboxValues("q6"),
+    q7_pain_point: document.getElementById("q7text").value,
+    q8_age: getRadioValue("q8"),
+    submitted_at: new Date().toISOString(),
+  };
+
+  console.log("问卷数据:", JSON.stringify(data, null, 2));
+
+  // 提交到后端
+  try {
+    const API = window.location.origin;
+    await fetch(`${API}/survey`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+  } catch(e) {
+    console.log("提交到服务器失败，数据已保存在本地");
+    // 本地备份
+    const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
+    surveys.push(data);
+    localStorage.setItem("surveys", JSON.stringify(surveys));
+  }
+
+  document.getElementById("formContainer").style.display = "none";
+  document.getElementById("thanksPage").style.display = "block";
+}
+</script>
+</body>
+</html>

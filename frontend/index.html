@@ -280,7 +280,9 @@ select option { background: #2d1033; }
       <div class="avatar-hint">点击更换头像</div>
       <div class="user-name" id="mainUsername">访客</div>
       <div class="user-status" id="mainStatus">健康档案未保存</div>
-      <button class="logout-btn" onclick="document.getElementById('loginModal').style.display='flex'">切换账号</button>
+      <button class="logout-btn" onclick="document.getElementById('loginModal').style.display='flex'" style="margin-bottom:6px">切换账号</button>
+      <button class="logout-btn" onclick="saveProfile()" id="saveProfileBtn" style="background:rgba(255,107,157,0.15);border-color:rgba(255,107,157,0.3);color:var(--accent)">💾 保存信息</button>
+      <div id="unsavedHint" style="display:none;font-size:11px;color:#fbbf24;margin-top:4px;text-align:center">⚠️ 信息已修改，请保存</div>
     </div>
 
     <!-- 助手切换 -->
@@ -308,11 +310,11 @@ select option { background: #2d1033; }
     <div class="section-title">基本信息</div>
     <div class="row2">
       <div class="field-group"><div class="field-label">年龄</div><input type="number" id="age" value="25" oninput="updateBMI()"></div>
-      <div class="field-group"><div class="field-label">体重 kg</div><input type="number" id="weight" value="55" step="0.1" oninput="updateBMI()"></div>
+      <div class="field-group"><div class="field-label">体重 kg</div><input type="number" id="weight" value="55" step="0.1" min="30" max="200" inputmode="decimal" oninput="updateBMI()" onblur="clampInput('weight',30,200)"></div>
     </div>
     <div class="row2">
-      <div class="field-group"><div class="field-label">身高 cm</div><input type="number" id="height" value="165" step="0.1" oninput="updateBMI()"></div>
-      <div class="field-group"><div class="field-label">目标体重 kg</div><input type="number" id="targetWeight" value="50" step="0.1"></div>
+      <div class="field-group"><div class="field-label">身高 cm</div><input type="number" id="height" value="165" step="0.1" min="100" max="220" inputmode="decimal" oninput="updateBMI()" onblur="clampInput('height',100,220)"></div>
+      <div class="field-group"><div class="field-label">目标体重 kg</div><input type="number" id="targetWeight" value="50" step="0.1" min="30" max="200" inputmode="decimal" onblur="clampInput('targetWeight',30,200)"></div>
     </div>
 
     <div class="section-title">目标 & 阶段</div>
@@ -348,12 +350,12 @@ select option { background: #2d1033; }
     </div>
     <div class="field-group"><div class="field-label">饮食偏好</div>
       <div class="row3">
-        <div class="habit-btn" onclick="this.classList.toggle('active')">素食</div>
-        <div class="habit-btn" onclick="this.classList.toggle('active')">低碳</div>
-        <div class="habit-btn" onclick="this.classList.toggle('active')">高蛋白</div>
-        <div class="habit-btn" onclick="this.classList.toggle('active')">无麸质</div>
-        <div class="habit-btn" onclick="this.classList.toggle('active')">无乳糖</div>
-        <div class="habit-btn" onclick="this.classList.toggle('active')">忌海鲜</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">素食</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">低碳</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">高蛋白</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">无麸质</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">无乳糖</div>
+        <div class="habit-btn" onclick="toggleHabit(this)">忌海鲜</div>
       </div>
     </div>
     <div class="field-group"><div class="field-label">健身经验</div>
@@ -461,6 +463,9 @@ function switchAssistant(id) {
   chatHistories[id].forEach(m => addMsgToDOM(m.role, m.text, id));
 
   msgs.scrollTop = msgs.scrollHeight;
+  
+  // 更新提示词
+  updateSuggestions();
 }
 
 function addMsgToDOM(role, text, assistantId) {
@@ -471,15 +476,48 @@ function addMsgToDOM(role, text, assistantId) {
   const icon = role === "bot"
     ? ASSISTANTS[aid].svg36
     : (uploadedAvatarUrl ? `<img src="${uploadedAvatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : `<span style="font-size:18px">${currentAvatar}</span>`);
-  const content = role === "bot" ? marked.parse(text) : text;
+  const content = role === "bot" ? renderMarkdown(text) : text;
   div.innerHTML = `<div class="msg-icon">${icon}</div><div class="msg-bubble">${content}</div>`;
   msgs.appendChild(div);
   return div;
 }
 
+// ===== Markdown 修复（只在完整文本上调用）=====
+function fixMarkdown(text) {
+  // 剥掉首尾的代码块标记（```markdown 或 ```）
+  text = text.replace(/^\s*```(?:markdown|md)?\s*\n?/i, "");
+  text = text.replace(/\n?```\s*$/i, "");
+
+  let lines = text.split("\n");
+  let counter = 1;
+  lines = lines.map(line => {
+    if (/^\s*\.\s/.test(line) && !/^\s*\d+\.\s/.test(line)) {
+      return line.replace(/^\s*\.\s/, counter++ + ". ");
+    }
+    return line;
+  });
+  text = lines.join("\n");
+
+  // 修复不成对的 ** （奇数个）
+  let boldCount = (text.match(/\*\*/g) || []).length;
+  if (boldCount % 2 !== 0) {
+    let lastIdx = text.lastIndexOf("**");
+    text = text.substring(0, lastIdx) + text.substring(lastIdx + 2);
+  }
+
+  return text;
+}
+
+function renderMarkdown(text) {
+  return marked.parse(fixMarkdown(text));
+}
+
 // ===== 发消息 =====
 function appendMsg(role, text) {
-  if (role !== "intro") chatHistories[currentAssistant].push({ role, text });
+  if (role !== "intro") {
+    chatHistories[currentAssistant].push({ role, text });
+    saveState();
+  }
   addMsgToDOM(role, text, currentAssistant);
   document.getElementById("messages").scrollTop = 99999;
 }
@@ -527,34 +565,106 @@ async function sendMsg() {
     lastMsg.querySelector(".msg-bubble").innerHTML += `<br><img src="${previewSrc}" style="max-width:200px;border-radius:10px;margin-top:8px">`;
   }
 
-  showTyping();
+  // 创建bot消息气泡（流式填充）
+  const msgs = document.getElementById("messages");
+  const botDiv = document.createElement("div");
+  botDiv.className = "msg bot";
+  const icon = ASSISTANTS[currentAssistant].svg36;
+  botDiv.innerHTML = `<div class="msg-icon">${icon}</div><div class="msg-bubble" id="streamBubble"><span class="typing"><span></span><span></span><span></span></span></div>`;
+  msgs.appendChild(botDiv);
+  msgs.scrollTop = 99999;
+
+  const bubble = document.getElementById("streamBubble");
 
   try {
-    const headers = {};
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-    let answer;
-
     if (uploadedImageFile) {
+      // 图片走原来的接口（非流式）
+      const headers = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
       const formData = new FormData();
       formData.append("file", uploadedImageFile);
       formData.append("question", query || "请分析这张图片中的食物，给出营养成分估算和健康建议。");
       const res = await fetch(`${API}/vision/analyze`, { method: "POST", headers, body: formData });
-      answer = (await res.json()).answer;
+      const answer = (await res.json()).answer;
+      bubble.id = "";
+      bubble.innerHTML = renderMarkdown(answer);
       removeImage();
+      chatHistories[currentAssistant].push({ role: "bot", text: answer });
+      saveState();
     } else {
-      headers["Content-Type"] = "application/json";
-      const res = await fetch(`${API}/chat`, {
+      // 文字走流式接口
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`${API}/chat/stream`, {
         method: "POST", headers,
         body: JSON.stringify({ query, user_profile: getProfile() })
       });
-      answer = (await res.json()).answer;
-    }
 
-    document.getElementById("typing")?.remove();
-    appendMsg("bot", answer);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+      let buffer = "";  // SSE 行缓冲区
+      let started = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // 按行处理SSE
+        const lines = buffer.split("\n");
+        buffer = lines.pop();  // 保留不完整的最后一行
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed === "") continue;
+
+          if (trimmed.startsWith("data: ")) {
+            const data = trimmed.slice(6);
+            if (data === "[DONE]") continue;
+
+            if (!started) {
+              bubble.innerHTML = "";
+              started = true;
+            }
+            // 解码JSON编码的内容（后端用json.dumps发送，处理换行符等）
+            let content;
+            try {
+              content = JSON.parse(data);
+            } catch(e) {
+              content = data;
+            }
+            fullText += content;
+            // 流式中用 marked.parse（不用fixMarkdown，因为文本不完整）
+            bubble.innerHTML = marked.parse(fullText);
+            msgs.scrollTop = 99999;
+          }
+        }
+      }
+
+      // 处理buffer中可能残留的最后一行
+      if (buffer.trim().startsWith("data: ")) {
+        const data = buffer.trim().slice(6);
+        if (data !== "[DONE]") {
+          try { fullText += JSON.parse(data); } catch(e) { fullText += data; }
+        }
+      }
+
+      bubble.id = "";
+      // 完成后用 fixMarkdown 修复格式并重新渲染
+      if (fullText) {
+        bubble.innerHTML = renderMarkdown(fullText);
+      } else {
+        bubble.innerHTML = marked.parse("回复为空");
+      }
+      chatHistories[currentAssistant].push({ role: "bot", text: fullText });
+      saveState();
+    }
   } catch(e) {
-    document.getElementById("typing")?.remove();
-    appendMsg("bot", "连接后端失败，请确认后端服务正在运行 🙏");
+    bubble.id = "";
+    bubble.innerHTML = "连接后端失败，请确认后端服务正在运行 🙏";
   }
 }
 
@@ -676,10 +786,21 @@ async function submitAuth() {
     document.getElementById("loginModal").style.display = "none";
     document.getElementById("mainUsername").textContent = username;
     document.getElementById("mainStatus").textContent = "已登录 · 健康档案已启用";
-    if (uploadedAvatarUrl) {
-      document.getElementById("mainAvatarWrap").innerHTML = `<img src="${uploadedAvatarUrl}">`;
-    }
+    // 清除旧用户的本地数据
+    localStorage.removeItem("fitherHistories");
+    chatHistories.xiaojian = [];
+    chatHistories.xiaokang = [];
+    chatHistories.shiqing = [];
     if (isRegister) switchAssistant(modalAssistant);
+    // 从localStorage按用户名加载档案（不依赖网络）
+    const savedProfile = loadProfileForUser(username);
+    if (savedProfile) {
+      setProfileFields(savedProfile);
+      showToast(`✅ ${username}：档案已加载`);
+    } else {
+      showToast(`👋 ${username}：新用户，请填写信息`);
+    }
+    switchAssistant(currentAssistant);
   } catch(e) {
     document.getElementById("modal-error").textContent = "连接失败，请确认后端运行中";
   }
@@ -690,6 +811,29 @@ function skipLogin() {
 }
 
 // ===== 性别 =====
+const SUGGESTIONS = {
+  female: {
+    xiaokang: ["经期应该怎么吃？", "每天需要多少蛋白质？", "减脂食谱推荐", "孕期饮食注意什么？"],
+    xiaojian: ["适合女生的力量训练", "经期能运动吗？", "如何练出马甲线？", "翘臀训练动作推荐"],
+    shiqing: ["最近老是失眠怎么办", "经期情绪低落怎么调节", "久坐办公怎么缓解", "压力大吃什么好？"]
+  },
+  male: {
+    xiaokang: ["增肌饮食怎么吃？", "每天需要多少蛋白质？", "减脂期怎么吃？", "蛋白粉怎么选？"],
+    xiaojian: ["新手胸肌训练计划", "深蹲正确姿势", "如何制定增肌计划？", "练背动作推荐"],
+    shiqing: ["训练后怎么恢复？", "睡眠不足影响增肌吗", "怎么避免运动损伤", "工作压力大怎么调节"]
+  }
+};
+
+function updateSuggestions(gender) {
+  const container = document.querySelector(".suggestions");
+  const g = gender || currentGender;
+  const aids = SUGGESTIONS[g] || SUGGESTIONS.female;
+  const suggestions = aids[currentAssistant] || aids.xiaokang;
+  container.innerHTML = suggestions.map(s =>
+    `<div class="suggestion" onclick="sendSuggestion(this)">${s}</div>`
+  ).join("");
+}
+
 function setGender(g) {
   currentGender = g;
   document.getElementById("btn-female").classList.toggle("active", g === "female");
@@ -700,9 +844,23 @@ function setGender(g) {
     o.style.display = (g === "male" && (o.value === "孕期营养" || o.value === "产后恢复")) ? "none" : "";
   });
   if (g === "male" && (goalSelect.value === "孕期营养" || goalSelect.value === "产后恢复")) goalSelect.value = "减脂";
+  updateSuggestions(g);
+}
+
+// ===== 饮食偏好 =====
+function toggleHabit(el) {
+  el.classList.toggle("active");
 }
 
 // ===== BMI =====
+function clampInput(id, min, max) {
+  const el = document.getElementById(id);
+  let v = parseFloat(el.value);
+  if (isNaN(v)) return;
+  if (v > max) el.value = max;
+  if (v < min) el.value = min;
+}
+
 function updateBMI() {
   const h = parseFloat(document.getElementById("height").value) / 100;
   const w = parseFloat(document.getElementById("weight").value);
@@ -738,16 +896,253 @@ function toggleFeedback() {
   document.getElementById("feedbackPanel").classList.toggle("open", feedbackOpen);
 }
 
-function submitFeedback() {
+async function submitFeedback() {
+  const tags = [...document.querySelectorAll(".feedback-option.selected")].map(e => e.textContent.trim());
+  const detail = document.querySelector(".feedback-textarea").value;
+  const contact = document.querySelector("#feedbackPanel input[type=text]").value;
+  
+  try {
+    await fetch(`${API}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tags, detail, contact })
+    });
+  } catch(e) {
+    console.log("反馈提交失败:", e);
+  }
+  
+  document.querySelectorAll(".feedback-option.selected").forEach(e => e.classList.remove("selected"));
+  document.querySelector(".feedback-textarea").value = "";
+  document.querySelector("#feedbackPanel input[type=text]").value = "";
+  
   document.getElementById("feedbackThanks").style.display = "block";
   setTimeout(() => { document.getElementById("feedbackThanks").style.display = "none"; toggleFeedback(); }, 2000);
 }
 
-// ===== 初始化 =====
+// ===== 保存档案 =====
+let profileDirty = false;
+
+function markProfileDirty() {
+  profileDirty = true;
+  document.getElementById("unsavedHint").style.display = "block";
+  document.getElementById("saveProfileBtn").textContent = "💾 保存信息 *";
+  // 同时自动保存到localStorage（按用户名，防止页面刷新丢失）
+  const username = document.getElementById("mainUsername").textContent;
+  saveProfileForUser(username, getProfileFields());
+}
+
+// 监听侧栏所有输入变化
 document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.querySelector(".sidebar");
+  if (sidebar) {
+    sidebar.addEventListener("input", markProfileDirty);
+    sidebar.addEventListener("change", markProfileDirty);
+  }
+});
+
+async function saveProfile() {
+  if (!token) {
+    alert("请先登录后再保存信息 💕");
+    document.getElementById("loginModal").style.display = "flex";
+    return;
+  }
+  const btn = document.getElementById("saveProfileBtn");
+  btn.textContent = "保存中...";
+  const profile = getProfile();
+  try {
+    const res = await fetch(`${API}/users/save-profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({
+        age: profile.age, gender: profile.gender,
+        height: profile.height, weight: profile.weight,
+        goal: profile.goal, dietary: profile.dietary,
+        life_stage: profile.life_stage, cycle_phase: profile.cycle_phase,
+        fitness_level: profile.fitness_level
+      })
+    });
+    if (res.ok) {
+      btn.textContent = "✅ 已保存";
+      document.getElementById("mainStatus").textContent = "已登录 · 健康档案已保存";
+      document.getElementById("unsavedHint").style.display = "none";
+      profileDirty = false;
+      // 同时存到localStorage（按用户名）
+      const username = document.getElementById("mainUsername").textContent;
+      saveProfileForUser(username, getProfileFields());
+      setTimeout(() => { btn.textContent = "💾 保存信息"; }, 2000);
+    } else {
+      const err = await res.json();
+      btn.textContent = "❌ " + (err.detail || "保存失败");
+      setTimeout(() => { btn.textContent = "💾 保存信息"; }, 2000);
+    }
+  } catch(e) {
+    btn.textContent = "❌ 连接失败";
+    setTimeout(() => { btn.textContent = "💾 保存信息"; }, 2000);
+  }
+}
+
+// ===== 本地存储 =====
+function getProfileFields() {
+  return {
+    age: document.getElementById("age").value,
+    weight: document.getElementById("weight").value,
+    height: document.getElementById("height").value,
+    targetWeight: document.getElementById("targetWeight").value,
+    goal: document.getElementById("goal").value,
+    lifeStage: document.getElementById("lifeStage").value,
+    cyclePhase: document.getElementById("cyclePhase").value,
+    fitnessLevel: document.getElementById("fitnessLevel").value,
+    exerciseFreq: document.getElementById("exerciseFreq").value,
+    sleep: document.getElementById("sleep").value,
+    dietary: document.getElementById("dietary").value,
+    gender: currentGender,
+    habits: [...document.querySelectorAll(".habit-btn.active:not(#btn-female):not(#btn-male)")].map(b => b.textContent),
+  };
+}
+
+function setProfileFields(p) {
+  if (!p) return;
+  if (p.age) document.getElementById("age").value = p.age;
+  if (p.weight) document.getElementById("weight").value = p.weight;
+  if (p.height) document.getElementById("height").value = p.height;
+  if (p.targetWeight) document.getElementById("targetWeight").value = p.targetWeight;
+  if (p.goal) document.getElementById("goal").value = p.goal;
+  if (p.lifeStage) document.getElementById("lifeStage").value = p.lifeStage;
+  if (p.cyclePhase) document.getElementById("cyclePhase").value = p.cyclePhase;
+  if (p.fitnessLevel) document.getElementById("fitnessLevel").value = p.fitnessLevel;
+  if (p.exerciseFreq) document.getElementById("exerciseFreq").value = p.exerciseFreq;
+  if (p.sleep) document.getElementById("sleep").value = p.sleep;
+  if (p.dietary) document.getElementById("dietary").value = p.dietary;
+  if (p.gender) setGender(p.gender);
+  if (p.habits && p.habits.length) {
+    document.querySelectorAll(".habit-btn:not(#btn-female):not(#btn-male)").forEach(btn => {
+      btn.classList.toggle("active", p.habits.includes(btn.textContent));
+    });
+  }
   updateBMI();
-  switchAssistant("xiaokang");
+}
+
+// 按用户名存储/加载档案
+function saveProfileForUser(username, profile) {
+  if (!username || username === "访客") return;
+  localStorage.setItem(`fither_profile_${username}`, JSON.stringify(profile));
+}
+
+function loadProfileForUser(username) {
+  if (!username || username === "访客") return null;
+  const data = localStorage.getItem(`fither_profile_${username}`);
+  if (!data) return null;
+  try { return JSON.parse(data); } catch(e) { return null; }
+}
+
+function saveState() {
+  localStorage.setItem("fitherToken", token || "");
+  localStorage.setItem("fitherUsername", document.getElementById("mainUsername").textContent);
+  localStorage.setItem("fitherAvatar", currentAvatar);
+  localStorage.setItem("fitherAvatarUrl", uploadedAvatarUrl || "");
+  localStorage.setItem("fitherHistories", JSON.stringify(chatHistories));
+  localStorage.setItem("fitherAssistant", currentAssistant);
+  localStorage.setItem("fitherGender", currentGender);
+  // 按用户名保存档案
+  const username = document.getElementById("mainUsername").textContent;
+  saveProfileForUser(username, getProfileFields());
+}
+
+function loadState() {
+  token = localStorage.getItem("fitherToken") || null;
+  const username = localStorage.getItem("fitherUsername");
+  const avatar = localStorage.getItem("fitherAvatar");
+  const avatarUrl = localStorage.getItem("fitherAvatarUrl");
+  const histories = localStorage.getItem("fitherHistories");
+  const assistant = localStorage.getItem("fitherAssistant") || "xiaokang";
+  const gender = localStorage.getItem("fitherGender") || "female";
+
+  if (username && username !== "访客") {
+    document.getElementById("mainUsername").textContent = username;
+    document.getElementById("mainStatus").textContent = "已登录 · 健康档案已启用";
+    document.getElementById("loginModal").style.display = "none";
+    // 从localStorage按用户名加载档案
+    const savedProfile = loadProfileForUser(username);
+    if (savedProfile) {
+      setProfileFields(savedProfile);
+    }
+  }
+
+  if (avatarUrl) {
+    uploadedAvatarUrl = avatarUrl;
+    document.getElementById("mainAvatarWrap").innerHTML = `<img src="${avatarUrl}">`;
+  } else if (avatar) {
+    currentAvatar = avatar;
+    document.getElementById("mainAvatarWrap").innerHTML = `<span style="font-size:26px">${avatar}</span>`;
+  }
+
+  if (histories) {
+    const h = JSON.parse(histories);
+    Object.assign(chatHistories, h);
+  }
+
+  setGender(gender);
+  currentAssistant = assistant;
+}
+
+// ===== 初始化 =====
+function showToast(msg) {
+  const toast = document.createElement("div");
+  toast.textContent = msg;
+  toast.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:opacity 0.3s";
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 300); }, 2500);
+}
+
+async function loadProfileFromServer() {
+  if (!token) { console.log("[profile] 无token，跳过"); return {loaded: false, info: "无token"}; }
+  try {
+    const res = await fetch(`${API}/users/me`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      console.log("[profile] 请求失败:", res.status);
+      return {loaded: false, info: `请求失败 ${res.status}`};
+    }
+    const user = await res.json();
+    console.log("[profile] 服务器数据:", JSON.stringify(user));
+    
+    // 检查服务器是否有实质数据
+    const hasData = user.age || user.weight || user.height || user.goal;
+    const info = `${user.gender || "?"} ${user.weight || "?"}kg ${user.height || "?"}cm ${user.goal || "?"}`;
+    
+    if (hasData) {
+      setProfileFields({
+        age: user.age,
+        weight: user.weight,
+        height: user.height,
+        gender: user.gender,
+        goal: user.goal,
+        dietary: user.dietary,
+        lifeStage: user.life_stage,
+        cyclePhase: user.cycle_phase,
+        fitnessLevel: user.fitness_level,
+      });
+      localStorage.setItem("fitherProfile", JSON.stringify(getProfileFields()));
+      document.getElementById("mainStatus").textContent = "已登录 · 健康档案已加载";
+      console.log("[profile] 加载成功:", info);
+      return {loaded: true, info};
+    } else {
+      console.log("[profile] 服务器无数据，保持当前值");
+      return {loaded: false, info: "服务器无数据"};
+    }
+  } catch(e) {
+    console.log("[profile] 加载失败:", e);
+    return {loaded: false, info: `加载失败: ${e.message}`};
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadState();
+  updateBMI();
+  switchAssistant(currentAssistant);
 });
 </script>
 </body>
 </html>
+

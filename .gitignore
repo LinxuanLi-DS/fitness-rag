@@ -5,3 +5,15 @@ __pycache__/
 .DS_Store
 data/raw/
 chromadb/
+
+# Database
+*.db
+
+# Survey data (privacy)
+data/survey_results.json
+
+# Test files
+test_*.py
+
+# Logs
+*.log
