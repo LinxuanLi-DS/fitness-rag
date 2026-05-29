@@ -47,36 +47,43 @@ body {
 
 /* ===== PAGES ===== */
 .page { display: none; height: calc(100vh - 56px); overflow: hidden; }
-.page.active { display: grid; grid-template-columns: 1fr 8px 420px; grid-template-rows: 1fr; gap: 0; overflow: hidden; }
+.page.active { display: flex; flex-direction: row; overflow: hidden; }
 
-/* Drag handle between panels */
+/* Left panel: takes remaining space */
+.page-left { flex: 1; min-width: 280px; overflow-y: auto; overflow-x: hidden; padding: 16px; }
+.page-left::-webkit-scrollbar { width: 4px; }
+.page-left::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+/* Resize handle */
 .resize-handle {
-  grid-column: 2; grid-row: 1;
-  width: 8px; cursor: col-resize; background: transparent;
-  position: relative; z-index: 10;
+  width: 6px; cursor: col-resize; background: transparent;
+  position: relative; z-index: 10; flex-shrink: 0;
   transition: background 0.2s;
 }
-.resize-handle:hover, .resize-handle.active { background: rgba(255,107,157,0.3); }
+.resize-handle:hover, .resize-handle.active { background: rgba(255,107,157,0.4); }
 .resize-handle::after {
   content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 3px; height: 40px; border-radius: 3px;
-  background: rgba(255,255,255,0.15); transition: background 0.2s;
+  width: 3px; height: 50px; border-radius: 3px;
+  background: rgba(255,255,255,0.12); transition: background 0.2s;
 }
-.resize-handle:hover::after, .resize-handle.active::after { background: rgba(255,107,157,0.6); }
+.resize-handle:hover::after, .resize-handle.active::after { background: rgba(255,107,157,0.7); }
+
+/* Right panel: chat */
+.page-right {
+  flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column;
+  min-width: 260px; width: 420px;
+}
 
 /* ===== RECORD PAGE ===== */
-.record-page { padding: 20px; gap: 20px; overflow-y: auto; overflow-x: hidden; grid-column: 1; grid-row: 1; min-height: 0; min-width: 0; }
-.record-page.female-layout { display: block; }
-.record-page.male-layout { display: block; }
-/* Chat panel always in right column */
-.chat-panel { grid-column: 3; grid-row: 1; min-height: 0; min-width: 0; overflow: hidden; }
+.record-page { display: none; }
+.record-page.active-layout { display: block; }
 
 /* Responsive: hide handle on small screens */
 @media (max-width: 800px) {
-  .page.active { grid-template-columns: 1fr !important; grid-template-rows: auto 1fr; }
+  .page.active { flex-direction: column; }
   .resize-handle { display: none; }
-  .record-page { grid-column: 1; grid-row: 1; }
-  .chat-panel { grid-column: 1; grid-row: 2; min-height: 300px; }
+  .page-left { flex: none; max-height: 50vh; }
+  .page-right { flex: 1; min-height: 40vh; }
 }
 
 /* LEFT PANEL - User Profile (female) */
@@ -407,7 +414,8 @@ body {
 /* ===== INTEGRATED CHAT PANEL ===== */
 .chat-panel {
   display: flex; flex-direction: column; background: rgba(0,0,0,0.1);
-  border: 1px solid var(--card-border); border-radius: 20px; overflow: hidden; height: 100%;
+  border: 1px solid var(--card-border); border-radius: 20px; overflow: hidden;
+  width: 100%; height: 100%; flex: 1;
 }
 .chat-panel-header {
   padding: 10px 16px; border-bottom: 1px solid var(--card-border);
@@ -634,8 +642,9 @@ body {
 
 <!-- ===== RECORD PAGE ===== -->
 <div class="page active" id="recordPage">
+  <div class="page-left">
   <!-- FEMALE LAYOUT -->
-  <div class="record-page female-layout" id="femaleRecordPage">
+  <div class="record-page active-layout" id="femaleRecordPage">
     <!-- LEFT PANEL: profile + tracking + history -->
     <div class="left-panel-stack">
       <!-- Compact Profile -->
@@ -827,7 +836,7 @@ body {
   </div>
 
   <!-- MALE LAYOUT -->
-  <div class="record-page male-layout" id="maleRecordPage" style="display:none">
+  <div class="record-page" id="maleRecordPage">
     <!-- LEFT PANEL: workout tracking -->
     <div class="left-panel-stack">
       <div class="tracking-dashboard">
@@ -916,10 +925,12 @@ body {
       <!-- Chat removed, using shared chat panel -->
     </div>
   </div>
+  </div><!-- close page-left -->
 
   <!-- Resize Handle -->
   <div class="resize-handle" id="resizeHandle"></div>
 
+  <div class="page-right">
   <!-- SHARED CHAT PANEL (always visible) -->
   <div class="chat-panel" id="sharedChatPanel">
     <div class="chat-panel-header">
@@ -952,6 +963,7 @@ body {
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
   </div>
+  </div><!-- close page-right -->
 </div>
 
 <!-- Login Modal -->
@@ -1165,8 +1177,8 @@ function toggleGender() {
 function applyGenderTheme() {
   const isFemale = currentGender === "female";
   document.body.classList.toggle("male-theme", !isFemale);
-  document.getElementById("femaleRecordPage").style.display = isFemale ? "block" : "none";
-  document.getElementById("maleRecordPage").style.display = isFemale ? "none" : "block";
+  document.getElementById("femaleRecordPage").classList.toggle("active-layout", isFemale);
+  document.getElementById("maleRecordPage").classList.toggle("active-layout", !isFemale);
   document.getElementById("genderToggle").textContent = isFemale ? "👧 女性模式" : "👦 男性模式";
   document.getElementById("navBrandIcon").textContent = isFemale ? "🌸" : "💪";
   document.getElementById("navBrandText").textContent = isFemale ? "FitHer" : "FitHim";
@@ -2164,20 +2176,20 @@ function showToast(msg) {
 
 // ===== RESIZE HANDLE =====
 (function() {
-  const MIN_LEFT = 300, MIN_RIGHT = 280;
-  let dragging = false, startX, startLeftWidth;
+  const MIN_LEFT = 280, MIN_RIGHT = 260;
+  let dragging = false, startX, startRightW;
   
   function init() {
     const handle = document.getElementById("resizeHandle");
-    const page = document.getElementById("recordPage");
-    if (!handle || !page) return;
+    const rightPanel = document.querySelector(".page-right");
+    if (!handle || !rightPanel) return;
     
     // Load saved width
     const saved = localStorage.getItem("fither_panel_width");
     if (saved) {
       const rightW = parseInt(saved);
       if (rightW >= MIN_RIGHT) {
-        page.style.gridTemplateColumns = `1fr 8px ${rightW}px`;
+        rightPanel.style.width = rightW + "px";
       }
     }
     
@@ -2185,10 +2197,7 @@ function showToast(msg) {
       e.preventDefault();
       dragging = true;
       startX = e.clientX;
-      const rect = page.getBoundingClientRect();
-      const computed = getComputedStyle(page);
-      const cols = computed.gridTemplateColumns.split(" ");
-      startLeftWidth = parseFloat(cols[0]);
+      startRightW = rightPanel.getBoundingClientRect().width;
       handle.classList.add("active");
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
@@ -2196,15 +2205,15 @@ function showToast(msg) {
     
     document.addEventListener("mousemove", (e) => {
       if (!dragging) return;
-      const rect = page.getBoundingClientRect();
-      const totalW = rect.width;
-      const dx = e.clientX - startX;
-      const newRightW = totalW - startLeftWidth - dx - 8;
+      const dx = startX - e.clientX;
+      const newRightW = startRightW + dx;
+      const pageW = rightPanel.parentElement.getBoundingClientRect().width;
+      const newLeftW = pageW - newRightW - 6;
       
       if (newRightW < MIN_RIGHT) return;
-      if (startLeftWidth + dx < MIN_LEFT) return;
+      if (newLeftW < MIN_LEFT) return;
       
-      page.style.gridTemplateColumns = `${startLeftWidth + dx}px 8px ${newRightW}px`;
+      rightPanel.style.width = newRightW + "px";
     });
     
     document.addEventListener("mouseup", () => {
@@ -2213,15 +2222,10 @@ function showToast(msg) {
       handle.classList.remove("active");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      // Save right panel width
-      const computed = getComputedStyle(page);
-      const cols = computed.gridTemplateColumns.split(" ");
-      const rightW = parseFloat(cols[2]);
-      localStorage.setItem("fither_panel_width", String(Math.round(rightW)));
+      localStorage.setItem("fither_panel_width", String(Math.round(rightPanel.getBoundingClientRect().width)));
     });
   }
   
-  // Init after DOM ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
