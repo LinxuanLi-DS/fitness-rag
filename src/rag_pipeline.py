@@ -129,6 +129,24 @@ def build_prompt(query: str, foods: list, exercises: list,
             profile_text += f"- 生理周期：{user_profile['cycle_phase']}\n"
         if user_profile.get("target_weight"):
             profile_text += f"- 目标体重：{user_profile['target_weight']} kg\n"
+        # 经期信息
+        if user_profile.get("period_info"):
+            pi = user_profile["period_info"]
+            profile_text += f"\n当前经期状态：\n"
+            profile_text += f"- 当前阶段：{pi.get('current_phase', '未知')}\n"
+            profile_text += f"- 周期第几天：第{pi.get('current_cycle_day', '?')}天\n"
+            if pi.get('days_until_next') is not None:
+                profile_text += f"- 距下次经期：{pi['days_until_next']}天\n"
+            if pi.get('phase_description'):
+                profile_text += f"- 阶段建议：{pi['phase_description']}\n"
+        # 经期历史
+        if user_profile.get("period_history"):
+            profile_text += f"\n最近经期记录：\n"
+            for r in user_profile["period_history"]:
+                line = f"- {r.get('start', '?')} → {r.get('end', '进行中')}"
+                if r.get('duration'): line += f" ({r['duration']}天)"
+                if r.get('symptoms'): line += f" [症状: {', '.join(r['symptoms'])}]"
+                profile_text += line + "\n"
 
     food_context = "\n".join([f"- {f}" for f in foods])
     exercise_context = "\n".join([f"- {e}" for e in exercises])
