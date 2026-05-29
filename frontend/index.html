@@ -47,13 +47,15 @@ body {
 
 /* ===== PAGES ===== */
 .page { display: none; height: calc(100vh - 56px); overflow: hidden; }
-.page.active { display: grid; grid-template-columns: 1fr 420px; gap: 0; overflow: hidden; }
+.page.active { display: grid; grid-template-columns: 1fr 420px; grid-template-rows: 1fr; gap: 0; overflow: hidden; }
 
 /* ===== RECORD PAGE ===== */
-.record-page { padding: 20px; gap: 20px; overflow-y: auto; }
-/* Female/Male layouts: just block, they live inside the left column of .page */
+.record-page { padding: 20px; gap: 20px; overflow-y: auto; grid-column: 1; grid-row: 1; min-height: 0; }
+/* Female/Male layouts */
 .record-page.female-layout { display: block; }
 .record-page.male-layout { display: block; }
+/* Chat panel always in right column */
+.chat-panel { grid-column: 2; grid-row: 1; min-height: 0; }
 
 /* LEFT PANEL - User Profile (female) */
 .profile-panel {
