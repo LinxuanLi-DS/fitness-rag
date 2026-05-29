@@ -270,3 +270,111 @@ def delete_period_record(
     db.delete(record)
     db.commit()
     return {"message": "记录已删除"}
+
+# ========== Daily Log Endpoints ==========
+
+@router.post("/daily-log")
+def save_daily_log(
+    data: dict,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """保存每日状态记录"""
+    from api.models.period_daily_log import PeriodDailyLog
+    if not current_user:
+        raise HTTPException(status_code=401, detail="请先登录")
+    
+    log_date = date.fromisoformat(data["log_date"])
+    symptoms = json.dumps(data.get("symptoms", []), ensure_ascii=False)
+    
+    existing = db.query(PeriodDailyLog).filter(
+        PeriodDailyLog.user_id == current_user.id,
+        PeriodDailyLog.log_date == log_date
+    ).first()
+    
+    if existing:
+        existing.flow = data.get("flow")
+        existing.pain_level = data.get("pain_level")
+        existing.mood = data.get("mood")
+        existing.symptoms = symptoms
+        existing.energy = data.get("energy")
+        existing.notes = data.get("notes", "")
+        db.commit()
+        db.refresh(existing)
+        return {"message": "今日状态已更新", "id": existing.id}
+    else:
+        log = PeriodDailyLog(
+            user_id=current_user.id,
+            log_date=log_date,
+            flow=data.get("flow"),
+            pain_level=data.get("pain_level"),
+            mood=data.get("mood"),
+            symptoms=symptoms,
+            energy=data.get("energy"),
+            notes=data.get("notes", "")
+        )
+        db.add(log)
+        db.commit()
+        db.refresh(log)
+        return {"message": "状态已记录", "id": log.id}
+
+
+@router.get("/daily-logs")
+def get_daily_logs(
+    month: Optional[int] = None,
+    year: Optional[int] = None,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取每日状态记录"""
+    from api.models.period_daily_log import PeriodDailyLog
+    if not current_user:
+        raise HTTPException(status_code=401, detail="请先登录")
+    
+    query = db.query(PeriodDailyLog).filter(PeriodDailyLog.user_id == current_user.id)
+    
+    if month and year:
+        start = date(year, month, 1)
+        end = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
+        query = query.filter(PeriodDailyLog.log_date >= start, PeriodDailyLog.log_date < end)
+    
+    logs = query.order_by(PeriodDailyLog.log_date.desc()).limit(30).all()
+    
+    result = []
+    for log in logs:
+        result.append({
+            "id": log.id,
+            "log_date": log.log_date.isoformat(),
+            "flow": log.flow,
+            "pain_level": log.pain_level,
+            "mood": log.mood,
+            "symptoms": json.loads(log.symptoms) if log.symptoms else [],
+            "energy": log.energy,
+            "notes": log.notes or ""
+        })
+    
+    return {"logs": result}
+
+
+@router.delete("/daily-log/{log_id}")
+def delete_daily_log(
+    log_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """删除每日状态记录"""
+    from api.models.period_daily_log import PeriodDailyLog
+    if not current_user:
+        raise HTTPException(status_code=401, detail="请先登录")
+    
+    log = db.query(PeriodDailyLog).filter(
+        PeriodDailyLog.id == log_id,
+        PeriodDailyLog.user_id == current_user.id
+    ).first()
+    
+    if not log:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    
+    db.delete(log)
+    db.commit()
+    return {"message": "已删除"}

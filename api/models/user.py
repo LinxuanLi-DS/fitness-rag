@@ -41,6 +41,7 @@ def init_db():
     # 确保经期记录表也被创建
     try:
         from api.models.period import PeriodRecord
+        from api.models.period_daily_log import PeriodDailyLog
         Base.metadata.create_all(bind=engine)
     except Exception:
         pass
