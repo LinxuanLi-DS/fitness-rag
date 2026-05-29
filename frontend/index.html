@@ -2415,7 +2415,6 @@ function saveWeight() {
 
 function renderWeightTracker() {
   const username = document.getElementById("navUsername").textContent;
-  if (!username || username === "访客") return;
   
   const key = `weight_${username}`;
   const history = JSON.parse(localStorage.getItem(key) || "[]");
@@ -2494,7 +2493,6 @@ function renderWeightTracker() {
 // ===== WATER TRACKER =====
 function renderWaterTracker() {
   const username = document.getElementById("navUsername").textContent;
-  if (!username || username === "访客") return;
   
   const key = `water_${username}_${new Date().toISOString().split("T")[0]}`;
   const count = parseInt(localStorage.getItem(key) || "0");
@@ -2516,7 +2514,6 @@ function renderWaterTracker() {
 
 function toggleWater(n) {
   const username = document.getElementById("navUsername").textContent;
-  if (!username || username === "访客") return;
   
   const key = `water_${username}_${new Date().toISOString().split("T")[0]}`;
   const current = parseInt(localStorage.getItem(key) || "0");
@@ -2544,7 +2541,6 @@ function selectSkin(el, status) {
   el.classList.add("active");
   
   const username = document.getElementById("navUsername").textContent;
-  if (!username || username === "访客") return;
   
   const key = `skin_${username}_${new Date().toISOString().split("T")[0]}`;
   localStorage.setItem(key, status);
@@ -2556,7 +2552,6 @@ function selectSkin(el, status) {
 
 function loadSkinStatus() {
   const username = document.getElementById("navUsername").textContent;
-  if (!username || username === "访客") return;
   
   const key = `skin_${username}_${new Date().toISOString().split("T")[0]}`;
   const saved = localStorage.getItem(key);
