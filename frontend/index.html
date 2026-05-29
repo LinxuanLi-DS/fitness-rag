@@ -318,6 +318,109 @@ body {
   margin-bottom: 12px;
   border: 1px solid var(--card-border);
 }
+
+/* Tracker cards (weight/water/skin) */
+.tracker-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 14px;
+  width: 100%; box-sizing: border-box; min-width: 0;
+  margin-bottom: 12px;
+  border: 1px solid var(--card-border);
+}
+
+/* Weight tracker */
+.weight-current {
+  display: flex; align-items: baseline; gap: 10px; margin: 10px 0;
+}
+.weight-value {
+  font-size: 28px; font-weight: 700; color: var(--text-main);
+}
+.weight-unit {
+  font-size: 14px; color: var(--text-dim); margin-left: 2px;
+}
+.weight-trend {
+  font-size: 12px; color: var(--text-dim);
+}
+.weight-input-row {
+  display: flex; gap: 8px; margin: 10px 0;
+}
+.weight-input-row .field-input {
+  flex: 1;
+}
+.weight-chart {
+  margin-top: 12px; width: 100%;
+}
+.weight-svg {
+  width: 100%; height: 60px;
+}
+.btn-small {
+  padding: 6px 14px; border-radius: 8px; border: none;
+  background: var(--accent); color: white; font-size: 12px;
+  font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.btn-small:hover {
+  background: var(--accent-hover);
+}
+
+/* Water tracker */
+.water-progress {
+  margin: 10px 0;
+}
+.water-bar {
+  height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px;
+  overflow: hidden; position: relative;
+}
+.water-bar::after {
+  content: ''; position: absolute; left: 0; top: 0; height: 100%;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  width: var(--water-percent, 0%); transition: width 0.3s ease;
+}
+.water-count {
+  text-align: center; font-size: 13px; color: var(--text-main);
+  margin-top: 6px; font-weight: 600;
+}
+.water-cups {
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+  margin-top: 10px;
+}
+.water-cup {
+  aspect-ratio: 1; border-radius: 6px; background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; transition: all 0.2s;
+}
+.water-cup:hover {
+  background: rgba(255,255,255,0.12);
+}
+.water-cup.filled {
+  background: rgba(79,172,254,0.2);
+}
+
+/* Skin tracker */
+.skin-status {
+  display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap;
+}
+.skin-option {
+  flex: 1; min-width: 60px; padding: 8px 6px; border-radius: 8px;
+  background: rgba(255,255,255,0.06); text-align: center;
+  font-size: 11px; cursor: pointer; transition: all 0.2s;
+  border: 2px solid transparent;
+}
+.skin-option:hover {
+  background: rgba(255,255,255,0.12);
+}
+.skin-option.active {
+  background: rgba(255,107,157,0.15);
+  border-color: var(--accent);
+}
+.skin-tips {
+  font-size: 11px; color: var(--text-dim); line-height: 1.5;
+  margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.03);
+  border-radius: 6px; display: none;
+}
+.skin-tips.show {
+  display: block;
+}
 .daily-log-item {
   background: rgba(255,255,255,0.04);
   border-radius: 10px;
@@ -804,6 +907,43 @@ body {
           <div id="recentLogsList" style="display:flex;flex-direction:column;gap:6px">
             <div style="color:var(--text-dim);font-size:12px;padding:8px">暂无记录</div>
           </div>
+        </div>
+
+        <!-- 体重追踪 -->
+        <div class="tracker-card" id="weightTrackerCard">
+          <div class="section-label">⚖️ 体重追踪</div>
+          <div class="weight-current">
+            <div class="weight-value" id="weightValue">--<span class="weight-unit">kg</span></div>
+            <div class="weight-trend" id="weightTrend">暂无数据</div>
+          </div>
+          <div class="weight-input-row">
+            <input type="number" id="weightInput" placeholder="今日体重" step="0.1" class="field-input" min="20" max="300">
+            <button class="btn-small" onclick="saveWeight()">记录</button>
+          </div>
+          <div id="weightChart" class="weight-chart"></div>
+        </div>
+
+        <!-- 喝水打卡 -->
+        <div class="tracker-card" id="waterTrackerCard">
+          <div class="section-label">💧 今日喝水</div>
+          <div class="water-progress">
+            <div class="water-bar" id="waterBar"></div>
+            <div class="water-count" id="waterCount">0/8 杯</div>
+          </div>
+          <div class="water-cups" id="waterCups"></div>
+        </div>
+
+        <!-- 皮肤状态 -->
+        <div class="tracker-card" id="skinTrackerCard">
+          <div class="section-label">✨ 今日皮肤</div>
+          <div class="skin-status" id="skinStatus">
+            <div class="skin-option" onclick="selectSkin(this,'很好')">😊 很好</div>
+            <div class="skin-option" onclick="selectSkin(this,'一般')">😐 一般</div>
+            <div class="skin-option" onclick="selectSkin(this,'出油')">💦 出油</div>
+            <div class="skin-option" onclick="selectSkin(this,'长痘')">😣 长痘</div>
+            <div class="skin-option" onclick="selectSkin(this,'干燥')">🏜️ 干燥</div>
+          </div>
+          <div class="skin-tips" id="skinTips"></div>
         </div>
 
         <div class="stats-row">
@@ -1628,6 +1768,10 @@ async function submitAuth() {
     else { fetchServerProfile(); }
     saveState();
     switchAssistant(currentAssistant);
+    // 初始化新增追踪器
+    renderWeightTracker();
+    renderWaterTracker();
+    loadSkinStatus();
     // 检查是否需要setup引导
     if (needSetup()) {
       openSetup(false);
@@ -2236,11 +2380,207 @@ function showToast(msg) {
   }
 })();
 
+// ===== WEIGHT TRACKER =====
+function saveWeight() {
+  const input = document.getElementById("weightInput");
+  const weight = parseFloat(input.value);
+  if (!weight || weight < 20 || weight > 300) {
+    showToast("请输入有效体重 (20-300kg)");
+    return;
+  }
+  const username = document.getElementById("navUsername").textContent;
+  const key = `weight_${username}`;
+  const history = JSON.parse(localStorage.getItem(key) || "[]");
+  const today = new Date().toISOString().split("T")[0];
+  
+  // 更新或添加今天的记录
+  const existing = history.find(r => r.date === today);
+  if (existing) {
+    existing.weight = weight;
+  } else {
+    history.push({ date: today, weight: weight });
+  }
+  
+  // 只保留最近90天
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 90);
+  const filtered = history.filter(r => new Date(r.date) >= cutoff);
+  filtered.sort((a, b) => a.date.localeCompare(b.date));
+  
+  localStorage.setItem(key, JSON.stringify(filtered));
+  input.value = "";
+  showToast("✅ 体重已记录");
+  renderWeightTracker();
+}
+
+function renderWeightTracker() {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return;
+  
+  const key = `weight_${username}`;
+  const history = JSON.parse(localStorage.getItem(key) || "[]");
+  history.sort((a, b) => a.date.localeCompare(b.date));
+  
+  const valueEl = document.getElementById("weightValue");
+  const trendEl = document.getElementById("weightTrend");
+  const chartEl = document.getElementById("weightChart");
+  
+  if (history.length === 0) {
+    valueEl.innerHTML = '--<span class="weight-unit">kg</span>';
+    trendEl.textContent = "暂无数据";
+    chartEl.innerHTML = "";
+    return;
+  }
+  
+  const latest = history[history.length - 1];
+  valueEl.innerHTML = `${latest.weight}<span class="weight-unit">kg</span>`;
+  
+  // 计算7天趋势
+  if (history.length >= 2) {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekData = history.filter(r => new Date(r.date) >= weekAgo);
+    if (weekData.length >= 2) {
+      const diff = (weekData[weekData.length - 1].weight - weekData[0].weight).toFixed(1);
+      const icon = diff > 0 ? "📈" : diff < 0 ? "📉" : "➡️";
+      const text = diff > 0 ? `上升 ${diff}kg` : diff < 0 ? `下降 ${Math.abs(diff)}kg` : "稳定";
+      trendEl.innerHTML = `${icon} 7天${text}`;
+    } else {
+      trendEl.textContent = "记录中...";
+    }
+  }
+  
+  // 渲染30天趋势图
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const chartData = history.filter(r => new Date(r.date) >= thirtyDaysAgo);
+  
+  if (chartData.length < 2) {
+    chartEl.innerHTML = '<div style="font-size:11px;color:var(--text-dim);text-align:center;padding:10px">记录2次以上显示趋势图</div>';
+    return;
+  }
+  
+  const weights = chartData.map(r => r.weight);
+  const min = Math.min(...weights) - 0.5;
+  const max = Math.max(...weights) + 0.5;
+  const range = max - min || 1;
+  
+  const width = 100;
+  const height = 60;
+  const points = chartData.map((d, i) => {
+    const x = (i / (chartData.length - 1)) * width;
+    const y = height - ((d.weight - min) / range) * height;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  
+  const dots = chartData.map((d, i) => {
+    const x = (i / (chartData.length - 1)) * width;
+    const y = height - ((d.weight - min) / range) * height;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="var(--accent)"><title>${d.date}: ${d.weight}kg</title></circle>`;
+  }).join("");
+  
+  chartEl.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" class="weight-svg">
+      <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-top:4px">
+      <span>${chartData[0].date.slice(5)}</span>
+      <span>${chartData[chartData.length-1].date.slice(5)}</span>
+    </div>
+  `;
+}
+
+// ===== WATER TRACKER =====
+function renderWaterTracker() {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return;
+  
+  const key = `water_${username}_${new Date().toISOString().split("T")[0]}`;
+  const count = parseInt(localStorage.getItem(key) || "0");
+  
+  const cupsEl = document.getElementById("waterCups");
+  const countEl = document.getElementById("waterCount");
+  const barEl = document.getElementById("waterBar");
+  
+  countEl.textContent = `${count}/8 杯`;
+  barEl.style.setProperty("--water-percent", `${(count / 8) * 100}%`);
+  
+  let html = "";
+  for (let i = 1; i <= 8; i++) {
+    const filled = i <= count;
+    html += `<div class="water-cup ${filled ? 'filled' : ''}" onclick="toggleWater(${i})">${filled ? '💧' : '○'}</div>`;
+  }
+  cupsEl.innerHTML = html;
+}
+
+function toggleWater(n) {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return;
+  
+  const key = `water_${username}_${new Date().toISOString().split("T")[0]}`;
+  const current = parseInt(localStorage.getItem(key) || "0");
+  
+  // 如果点击的是已填充的最后一个，取消；否则设置为n
+  if (n === current) {
+    localStorage.setItem(key, String(n - 1));
+  } else {
+    localStorage.setItem(key, String(n));
+  }
+  renderWaterTracker();
+}
+
+// ===== SKIN TRACKER =====
+const SKIN_TIPS = {
+  "很好": "✨ 皮肤状态不错！继续保持当前的护肤习惯，记得防晒哦~",
+  "一般": "💡 皮肤状态平稳，可以敷个补水面膜，保持充足睡眠。",
+  "出油": "💦 皮肤出油较多，建议：\n• 用温和控油洁面\n• 避免厚重面霜\n• 少吃甜食和奶制品\n• 黄体期常见，正常现象",
+  "长痘": "😣 长痘了，建议：\n• 不要挤痘痘！\n• 用含水杨酸的产品点涂\n• 清淡饮食，多喝水\n• 黄体期/经前容易长痘",
+  "干燥": "🏜️ 皮肤干燥，建议：\n• 加强保湿，用面霜锁水\n• 避免过度清洁\n• 经期常见，多补水"
+};
+
+function selectSkin(el, status) {
+  document.querySelectorAll(".skin-option").forEach(o => o.classList.remove("active"));
+  el.classList.add("active");
+  
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return;
+  
+  const key = `skin_${username}_${new Date().toISOString().split("T")[0]}`;
+  localStorage.setItem(key, status);
+  
+  const tipsEl = document.getElementById("skinTips");
+  tipsEl.innerHTML = SKIN_TIPS[status] || "";
+  tipsEl.classList.add("show");
+}
+
+function loadSkinStatus() {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return;
+  
+  const key = `skin_${username}_${new Date().toISOString().split("T")[0]}`;
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    document.querySelectorAll(".skin-option").forEach(o => {
+      if (o.textContent.includes(saved)) {
+        o.classList.add("active");
+        const tipsEl = document.getElementById("skinTips");
+        tipsEl.innerHTML = SKIN_TIPS[saved] || "";
+        tipsEl.classList.add("show");
+      }
+    });
+  }
+}
+
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
   updateBMI();
   updateSuggestions();
+  // 初始化新增追踪器
+  renderWeightTracker();
+  renderWaterTracker();
+  loadSkinStatus();
 });
 
 // 页面刷新/关闭前自动保存当前档案
