@@ -868,8 +868,19 @@ function switchPage(page) {
 
 // ===== GENDER TOGGLE =====
 function toggleGender() {
+  // 先保存当前性别的档案数据
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    saveProfileForUser(username, getProfileFields(), currentGender);
+  }
+  // 切换性别
   currentGender = currentGender === "female" ? "male" : "female";
   applyGenderTheme();
+  // 加载新性别的档案数据
+  if (username && username !== "访客") {
+    const saved = loadProfileForUser(username, currentGender);
+    if (saved) setProfileFields(saved);
+  }
   saveState();
 }
 
@@ -1131,15 +1142,28 @@ document.addEventListener("input", (e) => {
   if (e.target.closest(".profile-panel, .right-panel")) markProfileDirty();
 });
 
-function saveProfileForUser(username, profile) {
+function saveProfileForUser(username, profile, gender) {
   if (!username || username === "访客") return;
-  localStorage.setItem(`fither_profile_${username}`, JSON.stringify(profile));
+  const g = gender || profile.gender || currentGender;
+  localStorage.setItem(`fither_profile_${username}_${g}`, JSON.stringify(profile));
 }
-function loadProfileForUser(username) {
+function loadProfileForUser(username, gender) {
   if (!username || username === "访客") return null;
-  const data = localStorage.getItem(`fither_profile_${username}`);
-  if (!data) return null;
-  try { return JSON.parse(data); } catch(e) { return null; }
+  const g = gender || currentGender;
+  const data = localStorage.getItem(`fither_profile_${username}_${g}`);
+  if (data) { try { return JSON.parse(data); } catch(e) {} }
+  // 兼容旧版：尝试无gender后缀的key
+  const oldData = localStorage.getItem(`fither_profile_${username}`);
+  if (oldData) {
+    try {
+      const parsed = JSON.parse(oldData);
+      // 迁移到新key并删除旧key
+      localStorage.setItem(`fither_profile_${username}_${g}`, oldData);
+      localStorage.removeItem(`fither_profile_${username}`);
+      return parsed;
+    } catch(e) {}
+  }
+  return null;
 }
 
 async function saveProfile() {
@@ -1159,7 +1183,7 @@ async function saveProfile() {
       el.textContent = "✅ 已保存";
       document.getElementById(hint).style.display = "none";
       const username = document.getElementById("navUsername").textContent;
-      saveProfileForUser(username, getProfileFields());
+      saveProfileForUser(username, getProfileFields(), currentGender);
       setTimeout(() => { el.textContent = "💾 保存信息"; }, 2000);
     } else {
       el.textContent = "❌ 保存失败";
@@ -1176,8 +1200,7 @@ function saveState() {
   localStorage.setItem("fitherAvatar", currentAvatar);
   localStorage.setItem("fitherAssistant", currentAssistant);
   localStorage.setItem("fitherHistories", JSON.stringify(chatHistories));
-  const username = document.getElementById("navUsername").textContent;
-  saveProfileForUser(username, getProfileFields());
+  // NOTE: 不在这里保存档案数据，避免切换性别时覆盖
 }
 
 function loadState() {
@@ -1199,10 +1222,44 @@ function loadState() {
     document.getElementById("mProfileUsername").textContent = username;
     document.getElementById("mProfileStatus").textContent = "已登录";
     document.getElementById("loginModal").style.display = "none";
-    const saved = loadProfileForUser(username);
+    // 从localStorage加载当前性别的档案
+    const saved = loadProfileForUser(username, currentGender);
     if (saved) setProfileFields(saved);
+    // 后台从服务器同步档案
+    fetchServerProfile();
   }
   updateBMI();
+}
+
+// 从服务器拉取档案并缓存到localStorage
+async function fetchServerProfile() {
+  if (!token) return;
+  try {
+    const res = await fetch(`${API}/users/me`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.age) return; // 服务器没有档案数据
+    // 服务器档案作为fallback，仅在localStorage没有时填入
+    const username = document.getElementById("navUsername").textContent;
+    const existing = loadProfileForUser(username, currentGender);
+    if (!existing) {
+      const serverProfile = {
+        age: String(data.age || 25),
+        weight: String(data.weight || 55),
+        height: String(data.height || 165),
+        goal: data.goal || (currentGender === "female" ? "减脂" : "增肌"),
+        fitnessLevel: data.fitness_level || "新手",
+        exerciseFreq: data.exercise_freq || "几乎不运动",
+        gender: currentGender
+      };
+      setProfileFields(serverProfile);
+      saveProfileForUser(username, serverProfile, currentGender);
+    }
+  } catch(e) {
+    console.log("[profile] server sync skipped:", e.message);
+  }
 }
 
 // ===== AUTH =====
@@ -1240,9 +1297,9 @@ async function submitAuth() {
     document.getElementById("mProfileStatus").textContent = "已登录";
     localStorage.removeItem("fitherHistories");
     chatHistories.xiaojian = []; chatHistories.xiaokang = []; chatHistories.shiqing = [];
-    const saved = loadProfileForUser(username);
+    const saved = loadProfileForUser(username, currentGender);
     if (saved) { setProfileFields(saved); showToast(`✅ ${username}：档案已加载`); }
-    else showToast(`👋 ${username}：新用户`);
+    else { fetchServerProfile(); showToast(`👋 ${username}：新用户`); }
     saveState();
     switchAssistant(currentAssistant);
   } catch(e) { document.getElementById("modal-error").textContent = "连接失败"; }
@@ -1682,6 +1739,16 @@ document.addEventListener("DOMContentLoaded", () => {
   loadState();
   updateBMI();
   updateSuggestions();
+});
+
+// 页面刷新/关闭前自动保存当前档案
+window.addEventListener("beforeunload", () => {
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    try {
+      saveProfileForUser(username, getProfileFields(), currentGender);
+    } catch(e) {}
+  }
 });
 </script>
 </body>
