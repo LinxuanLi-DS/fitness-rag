@@ -47,15 +47,29 @@ body {
 
 /* ===== PAGES ===== */
 .page { display: none; height: calc(100vh - 56px); overflow: hidden; }
-.page.active { display: grid; grid-template-columns: 1fr 420px; grid-template-rows: 1fr; gap: 0; overflow: hidden; }
+.page.active { display: grid; grid-template-columns: 1fr 8px 420px; grid-template-rows: 1fr; gap: 0; overflow: hidden; }
+
+/* Drag handle between panels */
+.resize-handle {
+  grid-column: 2; grid-row: 1;
+  width: 8px; cursor: col-resize; background: transparent;
+  position: relative; z-index: 10;
+  transition: background 0.2s;
+}
+.resize-handle:hover, .resize-handle.active { background: rgba(255,107,157,0.3); }
+.resize-handle::after {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 3px; height: 40px; border-radius: 3px;
+  background: rgba(255,255,255,0.15); transition: background 0.2s;
+}
+.resize-handle:hover::after, .resize-handle.active::after { background: rgba(255,107,157,0.6); }
 
 /* ===== RECORD PAGE ===== */
 .record-page { padding: 20px; gap: 20px; overflow-y: auto; grid-column: 1; grid-row: 1; min-height: 0; }
-/* Female/Male layouts */
 .record-page.female-layout { display: block; }
 .record-page.male-layout { display: block; }
 /* Chat panel always in right column */
-.chat-panel { grid-column: 2; grid-row: 1; min-height: 0; }
+.chat-panel { grid-column: 3; grid-row: 1; min-height: 0; }
 
 /* LEFT PANEL - User Profile (female) */
 .profile-panel {
@@ -885,6 +899,9 @@ body {
       <!-- Chat removed, using shared chat panel -->
     </div>
   </div>
+
+  <!-- Resize Handle -->
+  <div class="resize-handle" id="resizeHandle"></div>
 
   <!-- SHARED CHAT PANEL (always visible) -->
   <div class="chat-panel" id="sharedChatPanel">
@@ -2127,6 +2144,73 @@ function showToast(msg) {
   document.body.appendChild(toast);
   setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 300); }, 2500);
 }
+
+// ===== RESIZE HANDLE =====
+(function() {
+  const MIN_LEFT = 300, MIN_RIGHT = 280;
+  let dragging = false, startX, startLeftWidth;
+  
+  function init() {
+    const handle = document.getElementById("resizeHandle");
+    const page = document.getElementById("recordPage");
+    if (!handle || !page) return;
+    
+    // Load saved width
+    const saved = localStorage.getItem("fither_panel_width");
+    if (saved) {
+      const rightW = parseInt(saved);
+      if (rightW >= MIN_RIGHT) {
+        page.style.gridTemplateColumns = `1fr 8px ${rightW}px`;
+      }
+    }
+    
+    handle.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      dragging = true;
+      startX = e.clientX;
+      const rect = page.getBoundingClientRect();
+      const computed = getComputedStyle(page);
+      const cols = computed.gridTemplateColumns.split(" ");
+      startLeftWidth = parseFloat(cols[0]);
+      handle.classList.add("active");
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    });
+    
+    document.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      const rect = page.getBoundingClientRect();
+      const totalW = rect.width;
+      const dx = e.clientX - startX;
+      const newRightW = totalW - startLeftWidth - dx - 8;
+      
+      if (newRightW < MIN_RIGHT) return;
+      if (startLeftWidth + dx < MIN_LEFT) return;
+      
+      page.style.gridTemplateColumns = `${startLeftWidth + dx}px 8px ${newRightW}px`;
+    });
+    
+    document.addEventListener("mouseup", () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove("active");
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      // Save right panel width
+      const computed = getComputedStyle(page);
+      const cols = computed.gridTemplateColumns.split(" ");
+      const rightW = parseFloat(cols[2]);
+      localStorage.setItem("fither_panel_width", String(Math.round(rightW)));
+    });
+  }
+  
+  // Init after DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
