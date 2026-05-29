@@ -303,6 +303,40 @@ body {
 }
 .daily-log-item .dl-del { background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 11px; }
 
+/* Today Tips Card */
+.today-tips-card {
+  background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(168,85,247,0.08));
+  border: 1px solid rgba(255,107,157,0.2);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.today-tips-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.today-tips-header .tips-icon { font-size: 18px; }
+.today-tips-header .tips-title { font-size: 14px; font-weight: 600; }
+.today-tips-header .tips-phase {
+  margin-left: auto; font-size: 11px; padding: 3px 10px;
+  border-radius: 12px; background: rgba(255,107,157,0.15); color: #ff6b9d;
+}
+.tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tips-item {
+  background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 12px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.tips-item .ti-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.tips-item .ti-content { flex: 1; }
+.tips-item .ti-label { font-size: 10px; color: var(--text-dim); margin-bottom: 2px; }
+.tips-item .ti-text { font-size: 12px; line-height: 1.4; }
+.tips-ask-btn {
+  margin-top: 10px; width: 100%; background: rgba(255,107,157,0.1);
+  border: 1px solid rgba(255,107,157,0.2); border-radius: 10px;
+  color: #ff6b9d; font-size: 12px; padding: 8px; cursor: pointer;
+  transition: all 0.2s;
+}
+.tips-ask-btn:hover { background: rgba(255,107,157,0.2); }
+
 /* Male right panel - workout log */
 .workout-log-item {
   display: flex; align-items: center; gap: 10px;
@@ -632,6 +666,18 @@ body {
             <div class="phase-item p-luteal">黄体期<br>22-28天</div>
           </div>
         </div>
+
+        <!-- Today Tips -->
+        <div class="today-tips-card" id="todayTipsCard" style="display:none">
+          <div class="today-tips-header">
+            <span class="tips-icon">✨</span>
+            <span class="tips-title">今日提醒</span>
+            <span class="tips-phase" id="tipsPhase">--</span>
+          </div>
+          <div class="tips-grid" id="tipsGrid"></div>
+          <button class="tips-ask-btn" onclick="askAITodayTips()">💬 让AI给我定制今日方案</button>
+        </div>
+
         <div class="action-row">
           <button class="action-btn primary" onclick="recordPeriodStart()">🔴 今天经期开始</button>
           <button class="action-btn secondary" onclick="recordPeriodEnd()">✅ 今天经期结束</button>
@@ -1580,6 +1626,8 @@ function renderPeriodDashboard(pred, records, stats) {
       "黄体期": ["可能情绪波动，选择舒缓运动", "适合瑜伽、拉伸、散步", "少盐防水肿"]
     };
     document.getElementById("adviceContent").innerHTML = (adviceMap[pred.current_phase] || []).map(a => `<div class="advice-item">${a}</div>`).join("");
+    // Render today tips card
+    renderTodayTips(pred.current_phase, pred.current_cycle_day, pred.days_until_next);
   } else {
     document.getElementById("cycleDayNum").textContent = "--";
     document.getElementById("adviceContent").innerHTML = '<div class="advice-item">记录至少2次完整经期后查看个性化建议</div>';
@@ -1636,6 +1684,109 @@ function renderCalendar() {
 }
 
 function changeCalMonth(delta) { calMonth += delta; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+
+// ===== TODAY TIPS (周期感知提醒) =====
+const TIPS_DATA = {
+  "经期": {
+    skin: { icon: "🧴", text: "皮肤敏感期，用温和洁面，避免刷酸和去角质" },
+    diet: { icon: "🍵", text: "喝温热红糖姜水，补铁吃红肉菠菜，忌冷饮" },
+    exercise: { icon: "🧘", text: "避免剧烈运动，散步/瑜伽/拉伸即可" },
+    mood: { icon: "💜", text: "允许自己慢下来，多休息，情绪波动是正常的" }
+  },
+  "卵泡期": {
+    skin: { icon: "✨", text: "皮肤状态最佳期！适合尝试新护肤品和面膜" },
+    diet: { icon: "🥗", text: "代谢旺盛，减脂黄金期，高蛋白+复合碳水" },
+    exercise: { icon: "🏋️", text: "精力充沛！适合高强度训练、HIIT、挑战新动作" },
+    mood: { icon: "🔥", text: "状态好，适合社交、学习新技能、做重要决定" }
+  },
+  "排卵期": {
+    skin: { icon: "💧", text: "注意防晒，皮肤代谢快，做好保湿" },
+    diet: { icon: "🥚", text: "多补蛋白质和叶酸，保持水分摄入" },
+    exercise: { icon: "💪", text: "体能巅峰！适合挑战PR、团队运动" },
+    mood: { icon: "🌟", text: "自信心最强，适合面试、社交、表达自己" }
+  },
+  "黄体早期": {
+    skin: { icon: "🧴", text: "开始出油，注意清洁，可用控油产品" },
+    diet: { icon: "🥜", text: "适当增加碳水，补镁（坚果/深色蔬菜）" },
+    exercise: { icon: "🏃", text: "状态稳定，保持中等强度有氧+力量训练" },
+    mood: { icon: "😊", text: "情绪平稳期，适合处理日常事务和规划" }
+  },
+  "黄体期": {
+    skin: { icon: "😣", text: "易长痘出油，清淡护肤，少吃甜食和奶制品" },
+    diet: { icon: "🍫", text: "少盐防水肿，少糖控痘，黑巧克力可以缓解馋嘴" },
+    exercise: { icon: "🚶", text: "适合低强度运动：散步、瑜伽、普拉提" },
+    mood: { icon: "🫂", text: "可能情绪低落，做喜欢的事，和朋友聊天" }
+  }
+};
+
+function renderTodayTips(phase, day, daysUntil) {
+  const card = document.getElementById("todayTipsCard");
+  const grid = document.getElementById("tipsGrid");
+  const phaseEl = document.getElementById("tipsPhase");
+  
+  if (!TIPS_DATA[phase]) { card.style.display = "none"; return; }
+  
+  card.style.display = "block";
+  let phaseText = phase + " · 第" + day + "天";
+  if (daysUntil !== null && daysUntil !== undefined) {
+    if (daysUntil > 0) phaseText += ` · 距下次经期${daysUntil}天`;
+    else if (daysUntil === 0) phaseText += " · 预计今天来";
+  }
+  phaseEl.textContent = phaseText;
+  
+  const tips = TIPS_DATA[phase];
+  grid.innerHTML = Object.values(tips).map(t => `
+    <div class="tips-item">
+      <span class="ti-icon">${t.icon}</span>
+      <div class="ti-content">
+        <div class="ti-label">${t.icon === "🧴" || t.icon === "✨" || t.icon === "💧" || t.icon === "😣" ? "皮肤" : t.icon === "🍵" || t.icon === "🥗" || t.icon === "🥚" || t.icon === "🥜" || t.icon === "🍫" ? "饮食" : t.icon === "🧘" || t.icon === "🏋️" || t.icon === "💪" || t.icon === "🏃" || t.icon === "🚶" ? "运动" : "情绪"}</div>
+        <div class="ti-text">${t.text}</div>
+      </div>
+    </div>
+  `).join("");
+  
+  // Check if we should send proactive AI greeting
+  checkProactiveGreeting(phase, day, daysUntil);
+}
+
+function askAITodayTips() {
+  const phase = periodData?.current_phase;
+  const day = periodData?.current_cycle_day;
+  if (!phase) { showToast("请先记录经期数据"); return; }
+  const input = document.getElementById("chatInput");
+  input.value = `我现在是${phase}第${day}天，请给我今天的完整建议：包括吃什么、练什么、皮肤护理和情绪调节，要具体可执行的方案。`;
+  sendMsg();
+}
+
+// ===== PROACTIVE AI GREETING =====
+let greetedToday = false;
+
+function checkProactiveGreeting(phase, day, daysUntil) {
+  if (greetedToday) return;
+  const todayKey = "fither_greeted_" + new Date().toISOString().split("T")[0];
+  if (localStorage.getItem(todayKey)) return;
+  
+  // Only greet if we have enough data
+  if (!phase || !day) return;
+  
+  greetedToday = true;
+  localStorage.setItem(todayKey, "1");
+  
+  // Wait 1.5s for the intro message to render, then send proactive message
+  setTimeout(() => {
+    let msg = "";
+    if (phase === "经期") {
+      msg = `我来姨妈了，第${day}天，今天身体不太舒服，有什么建议吗？`;
+    } else if (daysUntil !== null && daysUntil <= 3 && daysUntil > 0) {
+      msg = `距离下次经期还有${daysUntil}天，我需要提前注意什么？`;
+    } else {
+      msg = `我现在是${phase}第${day}天，今天应该怎么吃怎么练？给我具体建议吧~`;
+    }
+    const input = document.getElementById("chatInput");
+    input.value = msg;
+    sendMsg();
+  }, 1500);
+}
 
 async function recordPeriodStart() {
   if (!token) { showToast("请先登录"); return; }
