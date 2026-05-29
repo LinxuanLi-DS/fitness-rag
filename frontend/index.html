@@ -456,6 +456,53 @@ body {
 
 /* Toast */
 .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; padding: 10px 24px; border-radius: 10px; font-size: 13px; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: opacity 0.3s; }
+
+/* Setup Modal */
+.setup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 300; }
+.setup-modal { background: linear-gradient(135deg, var(--bg2), var(--bg1)); border: 1px solid var(--card-border); border-radius: 24px; padding: 32px 28px; width: 380px; max-height: 90vh; overflow-y: auto; }
+.setup-modal h2 { font-size: 20px; margin-bottom: 4px; text-align: center; }
+.setup-modal .setup-sub { color: var(--text-dim); font-size: 12px; text-align: center; margin-bottom: 20px; }
+.setup-step { display: none; }
+.setup-step.active { display: block; }
+.setup-step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.setup-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+.setup-dot.active { background: var(--accent); transform: scale(1.3); }
+.setup-dot.done { background: #4ade80; }
+.gender-pick { display: flex; gap: 12px; margin-bottom: 16px; }
+.gender-card { flex: 1; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.gender-card:hover { border-color: rgba(255,255,255,0.3); }
+.gender-card.selected { border-color: var(--accent); background: rgba(255,107,157,0.1); }
+.gender-card .g-icon { font-size: 36px; margin-bottom: 8px; }
+.gender-card .g-name { font-size: 14px; font-weight: 600; }
+.gender-card .g-desc { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.setup-field { margin-bottom: 14px; }
+.setup-field label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+.setup-field input, .setup-field select {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; color: #fff; padding: 10px 14px; font-size: 13px; outline: none;
+  box-sizing: border-box;
+}
+.setup-field input:focus, .setup-field select:focus { border-color: var(--accent); }
+.setup-field input::placeholder { color: rgba(255,255,255,0.3); }
+.setup-field.required label::after { content: " *"; color: #ff6b9d; }
+.setup-error { color: #ff6b6b; font-size: 11px; min-height: 14px; margin-bottom: 8px; }
+.setup-actions { display: flex; gap: 10px; margin-top: 8px; }
+.setup-actions .btn-primary { flex: 1; }
+.btn-secondary { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--text-dim); font-size: 13px; padding: 11px; cursor: pointer; }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+/* Settings Modal */
+.settings-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 250; }
+.settings-overlay.open { display: flex; }
+.settings-modal { background: linear-gradient(135deg, var(--bg2), var(--bg1)); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px; width: 360px; }
+.settings-modal h3 { font-size: 18px; margin-bottom: 16px; }
+.settings-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.settings-item:last-child { border-bottom: none; }
+.settings-item .s-label { font-size: 13px; }
+.settings-item .s-value { font-size: 12px; color: var(--text-dim); }
+.settings-gender-btn { background: rgba(255,107,157,0.1); border: 1px solid rgba(255,107,157,0.3); border-radius: 8px; color: #ff6b9d; font-size: 12px; padding: 6px 12px; cursor: pointer; }
+.settings-gender-btn:hover { background: rgba(255,107,157,0.2); }
+.settings-close { margin-top: 16px; width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 13px; padding: 10px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -471,8 +518,8 @@ body {
     <button class="nav-tab" onclick="switchPage('assistant')" id="tabAssistant">💬 AI 助手</button>
   </div>
   <div class="nav-right">
-    <button class="nav-gender-toggle" onclick="toggleGender()" id="genderToggle">👧 女性模式</button>
-    <div class="nav-user" onclick="document.getElementById('loginModal').style.display='flex'">
+    <button class="nav-gender-toggle" onclick="toggleGender()" id="genderToggle" style="display:none">👧 女性模式</button>
+    <div class="nav-user" onclick="navUserClick()">
       <div class="nav-user-avatar" id="navAvatar"><span>🌸</span></div>
       <span class="nav-user-name" id="navUsername">访客</span>
     </div>
@@ -486,7 +533,7 @@ body {
     <!-- LEFT: Profile -->
     <div class="profile-panel">
       <div class="profile-header">
-        <div class="profile-avatar-lg" id="profileAvatarLg" onclick="document.getElementById('loginModal').style.display='flex'">🌸</div>
+        <div class="profile-avatar-lg" id="profileAvatarLg" onclick="navUserClick()">🌸</div>
         <div id="profileUsername" style="font-size:14px;font-weight:600">访客</div>
         <div id="profileStatus" style="font-size:10px;color:var(--text-dim)">未登录</div>
       </div>
@@ -807,6 +854,116 @@ body {
 
 <!-- Feedback -->
 <div class="feedback-btn" onclick="toggleFeedback()">产品反馈</div>
+
+<!-- Setup Modal (新用户引导) -->
+<div class="setup-overlay" id="setupModal" style="display:none">
+  <div class="setup-modal">
+    <h2 id="setupTitle">👋 欢迎使用</h2>
+    <div class="setup-sub" id="setupSub">花1分钟完善资料，获得个性化建议</div>
+    <div class="setup-step-indicator" id="setupDots">
+      <div class="setup-dot active"></div>
+      <div class="setup-dot"></div>
+      <div class="setup-dot"></div>
+    </div>
+
+    <!-- Step 1: 选择性别 -->
+    <div class="setup-step active" id="setupStep1">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">选择你的性别</div>
+      <div class="gender-pick">
+        <div class="gender-card" onclick="selectSetupGender(this,'female')">
+          <div class="g-icon">👧</div>
+          <div class="g-name">女生</div>
+          <div class="g-desc">经期追踪 · 营养建议</div>
+        </div>
+        <div class="gender-card" onclick="selectSetupGender(this,'male')">
+          <div class="g-icon">👦</div>
+          <div class="g-name">男生</div>
+          <div class="g-desc">力量训练 · 增肌减脂</div>
+        </div>
+      </div>
+      <div class="setup-error" id="setupError1"></div>
+      <div class="setup-actions">
+        <button class="btn-primary" onclick="setupNext(1)">下一步</button>
+      </div>
+    </div>
+
+    <!-- Step 2: 基础信息（必填） -->
+    <div class="setup-step" id="setupStep2">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">基础身体数据</div>
+      <div class="setup-field required">
+        <label>身高 (cm)</label>
+        <input type="number" id="setupHeight" placeholder="如: 165" min="100" max="250">
+      </div>
+      <div class="setup-field required">
+        <label>体重 (kg)</label>
+        <input type="number" id="setupWeight" placeholder="如: 55" step="0.1" min="20" max="300">
+      </div>
+      <div class="setup-field required">
+        <label>年龄</label>
+        <input type="number" id="setupAge" placeholder="如: 25" min="10" max="100">
+      </div>
+      <div class="setup-error" id="setupError2"></div>
+      <div class="setup-actions">
+        <button class="btn-secondary" onclick="setupPrev(2)">上一步</button>
+        <button class="btn-primary" onclick="setupNext(2)">下一步</button>
+      </div>
+    </div>
+
+    <!-- Step 3: 可选信息 -->
+    <div class="setup-step" id="setupStep3">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">更多信息（可选）</div>
+      <div class="setup-field">
+        <label>我的目标</label>
+        <select id="setupGoal">
+          <option value="">请选择...</option>
+          <option>减脂</option><option>塑形</option><option>增肌</option><option>保持健康</option>
+        </select>
+      </div>
+      <div class="setup-field">
+        <label>运动频率</label>
+        <select id="setupFreq">
+          <option value="">请选择...</option>
+          <option>几乎不运动</option><option>每周1-2次</option><option>每周3-4次</option><option>每天运动</option>
+        </select>
+      </div>
+      <div class="setup-field">
+        <label>健身经验</label>
+        <select id="setupLevel">
+          <option value="">请选择...</option>
+          <option>新手</option><option>中级</option><option>进阶</option>
+        </select>
+      </div>
+      <div class="setup-actions">
+        <button class="btn-secondary" onclick="setupSkipOptional()">跳过</button>
+        <button class="btn-primary" onclick="setupComplete()">完成 🎉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="settings-overlay" id="settingsModal">
+  <div class="settings-modal">
+    <h3>⚙️ 设置</h3>
+    <div class="settings-item">
+      <span class="s-label">用户</span>
+      <span class="s-value" id="settingsUser">--</span>
+    </div>
+    <div class="settings-item">
+      <span class="s-label">当前性别</span>
+      <button class="settings-gender-btn" id="settingsGenderBtn" onclick="settingsToggleGender()">切换</button>
+    </div>
+    <div class="settings-item">
+      <span class="s-label">重新填写资料</span>
+      <button class="settings-gender-btn" onclick="reopenSetup()">重填</button>
+    </div>
+    <div class="settings-item">
+      <span class="s-label">退出登录</span>
+      <button class="settings-gender-btn" onclick="doLogout()">退出</button>
+    </div>
+    <button class="settings-close" onclick="closeSettings()">关闭</button>
+  </div>
+</div>
 <div class="feedback-panel" id="feedbackPanel">
   <button class="feedback-close" onclick="toggleFeedback()">✕</button>
   <h3 style="color:#fff;font-size:16px;margin-bottom:4px">💬 产品反馈</h3>
@@ -1227,6 +1384,10 @@ function loadState() {
     if (saved) setProfileFields(saved);
     // 后台从服务器同步档案
     fetchServerProfile();
+    // 开发者模式显示性别切换
+    if (isDevAccount()) {
+      document.getElementById("genderToggle").style.display = "";
+    }
   }
   updateBMI();
 }
@@ -1298,10 +1459,20 @@ async function submitAuth() {
     localStorage.removeItem("fitherHistories");
     chatHistories.xiaojian = []; chatHistories.xiaokang = []; chatHistories.shiqing = [];
     const saved = loadProfileForUser(username, currentGender);
-    if (saved) { setProfileFields(saved); showToast(`✅ ${username}：档案已加载`); }
-    else { fetchServerProfile(); showToast(`👋 ${username}：新用户`); }
+    if (saved) { setProfileFields(saved); }
+    else { fetchServerProfile(); }
     saveState();
     switchAssistant(currentAssistant);
+    // 检查是否需要setup引导
+    if (needSetup()) {
+      openSetup(false);
+    } else {
+      showToast(`👋 欢迎回来，${username}`);
+      // 开发者模式显示性别切换
+      if (isDevAccount()) {
+        document.getElementById("genderToggle").style.display = "";
+      }
+    }
   } catch(e) { document.getElementById("modal-error").textContent = "连接失败"; }
 }
 
@@ -1750,6 +1921,190 @@ window.addEventListener("beforeunload", () => {
     } catch(e) {}
   }
 });
+
+// ===== SETUP FLOW =====
+let setupGender = null;
+let setupStep = 1;
+const DEV_ACCOUNT = "111";
+
+function isDevAccount() {
+  return document.getElementById("navUsername").textContent === DEV_ACCOUNT;
+}
+
+function navUserClick() {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") {
+    document.getElementById("loginModal").style.display = "flex";
+  } else {
+    openSettings();
+  }
+}
+
+function selectSetupGender(el, gender) {
+  document.querySelectorAll(".gender-card").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
+  setupGender = gender;
+  document.getElementById("setupError1").textContent = "";
+}
+
+function setupNext(step) {
+  if (step === 1) {
+    if (!setupGender) { document.getElementById("setupError1").textContent = "请选择性别"; return; }
+    currentGender = setupGender;
+    applyGenderTheme();
+  }
+  if (step === 2) {
+    const h = parseFloat(document.getElementById("setupHeight").value);
+    const w = parseFloat(document.getElementById("setupWeight").value);
+    const a = parseInt(document.getElementById("setupAge").value);
+    if (!h || h < 100 || h > 250) { document.getElementById("setupError2").textContent = "请输入有效身高(100-250cm)"; return; }
+    if (!w || w < 20 || w > 300) { document.getElementById("setupError2").textContent = "请输入有效体重(20-300kg)"; return; }
+    if (!a || a < 10 || a > 100) { document.getElementById("setupError2").textContent = "请输入有效年龄(10-100)"; return; }
+    document.getElementById("setupError2").textContent = "";
+    // 填入主界面
+    const prefix = currentGender === "male" ? "m" : "";
+    document.getElementById(prefix + "height").value = h;
+    document.getElementById(prefix + "weight").value = w;
+    document.getElementById(prefix + "age").value = a;
+    updateBMI();
+  }
+  showSetupStep(step + 1);
+}
+
+function setupPrev(step) {
+  showSetupStep(step - 1);
+}
+
+function showSetupStep(n) {
+  setupStep = n;
+  document.querySelectorAll(".setup-step").forEach((el, i) => {
+    el.classList.toggle("active", i + 1 === n);
+  });
+  document.querySelectorAll(".setup-dot").forEach((dot, i) => {
+    dot.classList.remove("active", "done");
+    if (i + 1 === n) dot.classList.add("active");
+    else if (i + 1 < n) dot.classList.add("done");
+  });
+}
+
+function setupSkipOptional() {
+  // 保存必填的数据，跳过可选
+  finalizeSetup();
+}
+
+function setupComplete() {
+  const goal = document.getElementById("setupGoal").value;
+  const freq = document.getElementById("setupFreq").value;
+  const level = document.getElementById("setupLevel").value;
+  const prefix = currentGender === "male" ? "m" : "";
+  if (goal) document.getElementById(prefix + "goal").value = goal;
+  if (freq) document.getElementById(prefix + "exerciseFreq").value = freq;
+  if (level) document.getElementById(prefix + "fitnessLevel").value = level;
+  finalizeSetup();
+}
+
+function finalizeSetup() {
+  const username = document.getElementById("navUsername").textContent;
+  // 保存档案到localStorage
+  saveProfileForUser(username, getProfileFields(), currentGender);
+  // 标记setup已完成
+  localStorage.setItem(`fither_setup_${username}`, "1");
+  // 保存性别
+  localStorage.setItem("fitherGender", currentGender);
+  // 保存到服务器
+  saveProfile();
+  // 关闭setup
+  document.getElementById("setupModal").style.display = "none";
+  // 开发者模式显示性别切换
+  if (isDevAccount()) {
+    document.getElementById("genderToggle").style.display = "";
+  }
+  applyGenderTheme();
+  showToast("🎉 设置完成！开始使用吧");
+}
+
+function needSetup() {
+  const username = document.getElementById("navUsername").textContent;
+  if (!username || username === "访客") return false;
+  // 检查是否有完成的setup标记
+  return !localStorage.getItem(`fither_setup_${username}`);
+}
+
+function openSetup(fromSettings) {
+  setupGender = currentGender;
+  setupStep = 1;
+  showSetupStep(1);
+  // 清除之前的选择状态
+  document.querySelectorAll(".gender-card").forEach(c => c.classList.remove("selected"));
+  document.getElementById("setupError1").textContent = "";
+  document.getElementById("setupError2").textContent = "";
+  if (fromSettings) {
+    document.getElementById("setupTitle").textContent = "📝 重新填写资料";
+  } else {
+    document.getElementById("setupTitle").textContent = "👋 欢迎使用";
+  }
+  document.getElementById("setupModal").style.display = "flex";
+}
+
+function reopenSetup() {
+  closeSettings();
+  openSetup(true);
+}
+
+// ===== SETTINGS =====
+function openSettings() {
+  const username = document.getElementById("navUsername").textContent;
+  document.getElementById("settingsUser").textContent = username;
+  document.getElementById("settingsGenderBtn").textContent = currentGender === "female" ? "👧 女生 → 切换" : "👦 男生 → 切换";
+  document.getElementById("settingsModal").classList.add("open");
+}
+
+function closeSettings() {
+  document.getElementById("settingsModal").classList.remove("open");
+}
+
+function settingsToggleGender() {
+  // 先保存当前档案
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    saveProfileForUser(username, getProfileFields(), currentGender);
+  }
+  // 切换
+  currentGender = currentGender === "female" ? "male" : "female";
+  localStorage.setItem("fitherGender", currentGender);
+  applyGenderTheme();
+  // 加载新性别的档案
+  if (username && username !== "访客") {
+    const saved = loadProfileForUser(username, currentGender);
+    if (saved) setProfileFields(saved);
+  }
+  document.getElementById("settingsGenderBtn").textContent = currentGender === "female" ? "👧 女生 → 切换" : "👦 男生 → 切换";
+  showToast(currentGender === "female" ? "已切换到女生模式" : "已切换到男生模式");
+}
+
+function doLogout() {
+  // 先保存
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    saveProfileForUser(username, getProfileFields(), currentGender);
+  }
+  // 清除登录状态
+  token = null;
+  localStorage.removeItem("fitherToken");
+  localStorage.removeItem("fitherUsername");
+  // 关闭设置
+  closeSettings();
+  // 重置UI
+  document.getElementById("navUsername").textContent = "访客";
+  document.getElementById("profileUsername").textContent = "访客";
+  document.getElementById("profileStatus").textContent = "未登录";
+  document.getElementById("mProfileUsername").textContent = "访客";
+  document.getElementById("mProfileStatus").textContent = "未登录";
+  document.getElementById("genderToggle").style.display = "none";
+  // 显示登录
+  document.getElementById("loginModal").style.display = "flex";
+  showToast("已退出登录");
+}
 </script>
 </body>
 </html>
