@@ -50,7 +50,7 @@ body {
 .page.active { display: flex; flex-direction: row; overflow: hidden; }
 
 /* Left panel: takes remaining space */
-.page-left { flex: 1; min-width: 280px; overflow-y: auto; overflow-x: hidden; padding: 16px; }
+.page-left { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px; }
 .page-left::-webkit-scrollbar { width: 4px; }
 .page-left::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
@@ -70,8 +70,7 @@ body {
 
 /* Right panel: chat */
 .page-right {
-  flex-shrink: 0; overflow: hidden; display: flex; flex-direction: column;
-  min-width: 260px; width: 420px;
+  flex: 1; overflow: hidden; display: flex; flex-direction: column;
 }
 
 /* ===== RECORD PAGE ===== */
@@ -2177,19 +2176,21 @@ function showToast(msg) {
 // ===== RESIZE HANDLE =====
 (function() {
   const MIN_LEFT = 280, MIN_RIGHT = 260;
-  let dragging = false, startX, startRightW;
+  let dragging = false, startX, startLeftW;
   
   function init() {
     const handle = document.getElementById("resizeHandle");
-    const rightPanel = document.querySelector(".page-right");
-    if (!handle || !rightPanel) return;
+    const leftPanel = document.querySelector(".page-left");
+    const page = document.getElementById("recordPage");
+    if (!handle || !leftPanel || !page) return;
     
-    // Load saved width
-    const saved = localStorage.getItem("fither_panel_width");
+    // Load saved left width
+    const saved = localStorage.getItem("fither_left_width");
     if (saved) {
-      const rightW = parseInt(saved);
-      if (rightW >= MIN_RIGHT) {
-        rightPanel.style.width = rightW + "px";
+      const leftW = parseInt(saved);
+      if (leftW >= MIN_LEFT) {
+        leftPanel.style.flex = "none";
+        leftPanel.style.width = leftW + "px";
       }
     }
     
@@ -2197,7 +2198,7 @@ function showToast(msg) {
       e.preventDefault();
       dragging = true;
       startX = e.clientX;
-      startRightW = rightPanel.getBoundingClientRect().width;
+      startLeftW = leftPanel.getBoundingClientRect().width;
       handle.classList.add("active");
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
@@ -2205,15 +2206,15 @@ function showToast(msg) {
     
     document.addEventListener("mousemove", (e) => {
       if (!dragging) return;
-      const dx = startX - e.clientX;
-      const newRightW = startRightW + dx;
-      const pageW = rightPanel.parentElement.getBoundingClientRect().width;
-      const newLeftW = pageW - newRightW - 6;
+      const dx = e.clientX - startX;
+      const newLeftW = startLeftW + dx;
+      const totalW = page.getBoundingClientRect().width;
+      const newRightW = totalW - newLeftW - 6; // 6 = handle width
       
-      if (newRightW < MIN_RIGHT) return;
-      if (newLeftW < MIN_LEFT) return;
+      if (newLeftW < MIN_LEFT || newRightW < MIN_RIGHT) return;
       
-      rightPanel.style.width = newRightW + "px";
+      leftPanel.style.flex = "none";
+      leftPanel.style.width = newLeftW + "px";
     });
     
     document.addEventListener("mouseup", () => {
@@ -2222,7 +2223,7 @@ function showToast(msg) {
       handle.classList.remove("active");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      localStorage.setItem("fither_panel_width", String(Math.round(rightPanel.getBoundingClientRect().width)));
+      localStorage.setItem("fither_left_width", String(Math.round(leftPanel.getBoundingClientRect().width)));
     });
   }
   
