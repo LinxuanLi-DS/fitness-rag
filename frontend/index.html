@@ -930,7 +930,7 @@ function getProfileFields() {
 
 function setProfileFields(p) {
   if (!p) return;
-  const prefix = p.gender === "男" ? "m" : "";
+  const prefix = p.gender === "male" ? "m" : "";
   if (p.age) document.getElementById(prefix + "age").value = p.age;
   if (p.weight) document.getElementById(prefix + "weight").value = p.weight;
   if (p.height) document.getElementById(prefix + "height").value = p.height;
@@ -1010,6 +1010,9 @@ function loadState() {
   const histories = localStorage.getItem("fitherHistories");
   if (histories) { try { Object.assign(chatHistories, JSON.parse(histories)); } catch(e) {} }
 
+  // 先切换性别模式，确保UI正确显示
+  applyGenderTheme();
+
   if (username && username !== "访客") {
     document.getElementById("navUsername").textContent = username;
     document.getElementById("profileUsername").textContent = username;
@@ -1020,7 +1023,6 @@ function loadState() {
     const saved = loadProfileForUser(username);
     if (saved) setProfileFields(saved);
   }
-  applyGenderTheme();
   updateBMI();
 }
 
