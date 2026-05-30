@@ -68,7 +68,7 @@ def chat(
     if frontend_profile and "assistant" in frontend_profile:
         assistant_id = frontend_profile["assistant"]
 
-    answer = ask(request.query, profile, assistant_id=assistant_id)
+    answer = ask(request.query, profile, assistant_id=assistant_id, chat_history=request.chat_history)
     return ChatResponse(answer=answer)
 
 
@@ -89,7 +89,7 @@ def chat_stream(
     def generate():
         # 检索知识库
         foods, exercises = retrieve(request.query)
-        prompt = build_prompt(request.query, foods, exercises, profile, assistant_id)
+        prompt = build_prompt(request.query, foods, exercises, profile, assistant_id, request.chat_history)
 
         # 流式调用 Qwen
         stream = qwen.chat.completions.create(

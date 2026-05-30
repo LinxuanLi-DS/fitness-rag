@@ -1272,6 +1272,10 @@ body {
       <button class="settings-gender-btn" onclick="reopenSetup()">重填</button>
     </div>
     <div class="settings-item">
+      <span class="s-label">清除对话记忆</span>
+      <button class="settings-gender-btn" onclick="clearChatMemory()">清除</button>
+    </div>
+    <div class="settings-item">
       <span class="s-label">退出登录</span>
       <button class="settings-gender-btn" onclick="doLogout()">退出</button>
     </div>
@@ -1517,7 +1521,7 @@ async function sendMsg() {
           symptoms: r.symptoms
         }));
       }
-      const res = await fetch(`${API}/chat/stream`, { method: "POST", headers, body: JSON.stringify({ query, user_profile: profile }) });
+      const res = await fetch(`${API}/chat/stream`, { method: "POST", headers, body: JSON.stringify({ query, user_profile: profile, chat_history: chatHistories[currentAssistant] }) });
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let fullText = "", buffer = "", started = false;
@@ -2878,6 +2882,20 @@ function settingsToggleGender() {
   }
   document.getElementById("settingsGenderBtn").textContent = currentGender === "female" ? "👧 女生 → 切换" : "👦 男生 → 切换";
   showToast(currentGender === "female" ? "已切换到女生模式" : "已切换到男生模式");
+}
+
+function clearChatMemory() {
+  if (!confirm("确定清除所有对话记录？AI将不再记得之前的聊天内容。")) return;
+  // 清除所有助手的对话历史
+  chatHistories.xiaojian = [];
+  chatHistories.xiaokang = [];
+  chatHistories.shiqing = [];
+  // 清除localStorage
+  localStorage.removeItem("fitherHistories");
+  // 重新加载当前助手（会显示intro消息）
+  switchAssistant(currentAssistant);
+  closeSettings();
+  showToast("✅ 对话记忆已清除");
 }
 
 function doLogout() {

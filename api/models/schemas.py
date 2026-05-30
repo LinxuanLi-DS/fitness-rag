@@ -49,6 +49,7 @@ class Token(BaseModel):
 class ChatRequest(BaseModel):
     query: str
     user_profile: Optional[dict] = None
+    chat_history: Optional[list] = None
 
 
 class ChatResponse(BaseModel):

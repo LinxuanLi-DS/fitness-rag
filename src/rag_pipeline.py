@@ -104,7 +104,8 @@ def retrieve(query: str, n_results: int = 5):
 
 
 def build_prompt(query: str, foods: list, exercises: list,
-                 user_profile: dict = None, assistant_id: str = "xiaokang"):
+                 user_profile: dict = None, assistant_id: str = "xiaokang",
+                 chat_history: list = None):
     """把检索结果 + 用户画像 + 助手人设拼成prompt"""
     config = ASSISTANT_CONFIGS.get(assistant_id, ASSISTANT_CONFIGS["xiaokang"])
 
@@ -151,6 +152,22 @@ def build_prompt(query: str, foods: list, exercises: list,
     food_context = "\n".join([f"- {f}" for f in foods])
     exercise_context = "\n".join([f"- {e}" for e in exercises])
 
+    # 构建对话历史
+    history_text = ""
+    if chat_history:
+        # 只取最近10条（5轮对话）
+        recent = chat_history[-10:]
+        history_lines = []
+        for msg in recent:
+            role = msg.get("role", "")
+            text = msg.get("text", "")
+            if role == "user":
+                history_lines.append(f"用户：{text}")
+            elif role == "bot":
+                history_lines.append(f"助手：{text}")
+        if history_lines:
+            history_text = "\n\n之前的对话记录（请参考，保持上下文连贯）：\n" + "\n".join(history_lines)
+
     return f"""{config['system_prompt']}
 
 {profile_text}
@@ -159,11 +176,13 @@ def build_prompt(query: str, foods: list, exercises: list,
 
 参考健身动作数据：
 {exercise_context}
+{history_text}
 
 用户问题：{query}
 
 回答要求：
 - 仔细理解用户的意图，不要答非所问
+- 如果提供了之前的对话记录，请参考上下文保持回答连贯，不要重复之前说过的内容
 - 如果问题完全超出你的专长领域，礼貌说明并推荐合适的助手（小健/小康/十七）
 - 如果问题与健身、饮食、健康完全无关，礼貌引导
 - 简单问候或闲聊：1-2句话回应
@@ -202,13 +221,13 @@ def build_prompt(query: str, foods: list, exercises: list,
 请回答："""
 
 
-def ask(query: str, user_profile: dict = None, assistant_id: str = "xiaokang"):
+def ask(query: str, user_profile: dict = None, assistant_id: str = "xiaokang", chat_history: list = None):
     """完整的 RAG 问答流程"""
     print(f"\n🔍 检索相关知识 (助手: {assistant_id})...")
     foods, exercises = retrieve(query)
 
     print(f"📝 构建 prompt...")
-    prompt = build_prompt(query, foods, exercises, user_profile, assistant_id)
+    prompt = build_prompt(query, foods, exercises, user_profile, assistant_id, chat_history)
 
     print(f"🤖 Qwen 正在思考...\n")
     response = qwen.chat.completions.create(
