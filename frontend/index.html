@@ -1724,7 +1724,11 @@ function saveState() {
   localStorage.setItem("fitherGender", currentGender);
   localStorage.setItem("fitherAvatar", currentAvatar);
   localStorage.setItem("fitherAssistant", currentAssistant);
-  localStorage.setItem("fitherHistories", JSON.stringify(chatHistories));
+  // 对话历史按用户存储
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    localStorage.setItem(`fitherHistories_${username}`, JSON.stringify(chatHistories));
+  }
   // NOTE: 不在这里保存档案数据，避免切换性别时覆盖
 }
 
@@ -1734,8 +1738,11 @@ function loadState() {
   currentGender = localStorage.getItem("fitherGender") || "female";
   currentAvatar = localStorage.getItem("fitherAvatar") || "🌸";
   currentAssistant = localStorage.getItem("fitherAssistant") || "xiaokang";
-  const histories = localStorage.getItem("fitherHistories");
-  if (histories) { try { Object.assign(chatHistories, JSON.parse(histories)); } catch(e) {} }
+  // 对话历史按用户读取
+  if (username && username !== "访客") {
+    const histories = localStorage.getItem(`fitherHistories_${username}`);
+    if (histories) { try { Object.assign(chatHistories, JSON.parse(histories)); } catch(e) {} }
+  }
 
   // 先切换性别模式，确保UI正确显示
   applyGenderTheme();
@@ -1825,7 +1832,20 @@ async function submitAuth() {
     document.getElementById("mProfileUsername").textContent = username;
     document.getElementById("mProfileStatus").textContent = "已登录";
     localStorage.removeItem("fitherHistories");
-    chatHistories.xiaojian = []; chatHistories.xiaokang = []; chatHistories.shiqing = [];
+    // 加载该用户的对话历史（不再清除）
+    const savedHistories = localStorage.getItem(`fitherHistories_${username}`);
+    if (savedHistories) {
+      try {
+        const parsed = JSON.parse(savedHistories);
+        chatHistories.xiaojian = parsed.xiaojian || [];
+        chatHistories.xiaokang = parsed.xiaokang || [];
+        chatHistories.shiqing = parsed.shiqing || [];
+      } catch(e) {
+        chatHistories.xiaojian = []; chatHistories.xiaokang = []; chatHistories.shiqing = [];
+      }
+    } else {
+      chatHistories.xiaojian = []; chatHistories.xiaokang = []; chatHistories.shiqing = [];
+    }
     const saved = loadProfileForUser(username, currentGender);
     if (saved) { setProfileFields(saved); }
     else { fetchServerProfile(); }
@@ -2890,8 +2910,11 @@ function clearChatMemory() {
   chatHistories.xiaojian = [];
   chatHistories.xiaokang = [];
   chatHistories.shiqing = [];
-  // 清除localStorage
-  localStorage.removeItem("fitherHistories");
+  // 清除当前用户的localStorage对话历史
+  const username = document.getElementById("navUsername").textContent;
+  if (username && username !== "访客") {
+    localStorage.removeItem(`fitherHistories_${username}`);
+  }
   // 重新加载当前助手（会显示intro消息）
   switchAssistant(currentAssistant);
   closeSettings();
