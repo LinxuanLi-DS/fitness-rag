@@ -684,6 +684,25 @@ body {
 /* Toast */
 .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; padding: 10px 24px; border-radius: 10px; font-size: 13px; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: opacity 0.3s; }
 
+/* SVG Icons */
+.icon { vertical-align: middle; display: inline-block; flex-shrink: 0; }
+.icon-btn .icon { width: 18px; height: 18px; }
+.send-btn .icon { width: 18px; height: 18px; }
+.section-label .icon { width: 14px; height: 14px; margin-right: 4px; opacity: 0.7; }
+.action-btn .icon { width: 14px; height: 14px; margin-right: 4px; }
+.btn-small .icon, .save-btn .icon, .ask-ai-btn .icon, .tips-ask-btn .icon { width: 13px; height: 13px; margin-right: 4px; }
+.tips-icon .icon { width: 18px; height: 18px; }
+.cal-nav .icon { width: 16px; height: 16px; }
+.history-del .icon { width: 14px; height: 14px; }
+.dl-del .icon { width: 12px; height: 12px; }
+.unsaved-hint .icon { width: 12px; height: 12px; margin-right: 2px; }
+.nav-brand-icon .icon { width: 20px; height: 20px; }
+.nav-user-avatar .icon { width: 16px; height: 16px; }
+.setup-close .icon { width: 16px; height: 16px; }
+.feedback-close .icon { width: 14px; height: 14px; }
+.img-remove .icon { width: 10px; height: 10px; }
+.advice-title .icon { width: 14px; height: 14px; margin-right: 4px; }
+
 /* Setup Modal */
 .setup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 300; }
 .setup-modal { background: linear-gradient(135deg, var(--bg2), var(--bg1)); border: 1px solid var(--card-border); border-radius: 24px; padding: 32px 28px; width: 380px; max-height: 90vh; overflow-y: auto; position: relative; }
@@ -760,13 +779,13 @@ body {
 <!-- TOP NAV -->
 <nav class="top-nav">
   <div class="nav-brand">
-    <span class="nav-brand-icon" id="navBrandIcon">🌸</span>
+    <span class="nav-brand-icon" id="navBrandIcon"></span>
     <span class="nav-brand-text" id="navBrandText">FitHer</span>
   </div>
   <div class="nav-right">
-    <button class="nav-gender-toggle" onclick="toggleGender()" id="genderToggle" style="display:none">👧 女性模式</button>
+    <button class="nav-gender-toggle" onclick="toggleGender()" id="genderToggle" style="display:none">女性模式</button>
     <div class="nav-user" onclick="navUserClick()">
-      <div class="nav-user-avatar" id="navAvatar"><span>🌸</span></div>
+      <div class="nav-user-avatar" id="navAvatar"></div>
       <span class="nav-user-name" id="navUsername">访客</span>
     </div>
   </div>
@@ -782,7 +801,7 @@ body {
       <!-- Compact Profile -->
       <div class="profile-panel compact">
         <div class="profile-header">
-          <div class="profile-avatar-lg" id="profileAvatarLg" onclick="uploadAvatar()">🌸</div>
+          <div class="profile-avatar-lg" id="profileAvatarLg" onclick="uploadAvatar()"></div>
           <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
           <div id="profileUsername" style="font-size:14px;font-weight:600">访客</div>
           <div id="profileStatus" style="font-size:10px;color:var(--text-dim)">未登录</div>
@@ -823,8 +842,8 @@ body {
         </div>
         <div class="field-group"><div class="field-label">健身经验</div><select class="field-select" id="fitnessLevel"><option>新手</option><option>中级</option><option>进阶</option></select></div>
         <div class="field-group"><div class="field-label">其他备注</div><input type="text" class="field-input" id="dietary" placeholder="如：有糖尿病..."></div>
-        <button class="save-btn" onclick="saveProfile()" id="saveProfileBtn">💾 保存信息</button>
-        <div class="unsaved-hint" id="unsavedHint">⚠️ 信息已修改，请保存</div>
+        <button class="save-btn" onclick="saveProfile()" id="saveProfileBtn">保存信息</button>
+        <div class="unsaved-hint" id="unsavedHint">信息已修改，请保存</div>
       </div>
 
       <!-- Tracking Dashboard -->
@@ -845,23 +864,23 @@ body {
         <!-- Today Tips -->
         <div class="today-tips-card" id="todayTipsCard" style="display:none">
           <div class="today-tips-header">
-            <span class="tips-icon">✨</span>
+            <span class="tips-icon"></span>
             <span class="tips-title">今日提醒</span>
             <span class="tips-phase" id="tipsPhase">--</span>
           </div>
           <div class="tips-grid" id="tipsGrid"></div>
-          <button class="tips-ask-btn" onclick="askAITodayTips()">💬 让AI给我定制今日方案</button>
+          <button class="tips-ask-btn" onclick="askAITodayTips()">让AI给我定制今日方案</button>
         </div>
 
         <div class="action-row">
-          <button class="action-btn primary" onclick="recordPeriodStart()">🔴 今天经期开始</button>
-          <button class="action-btn secondary" onclick="recordPeriodEnd()">✅ 今天经期结束</button>
+          <button class="action-btn primary" onclick="recordPeriodStart()">今天经期开始</button>
+          <button class="action-btn secondary" onclick="recordPeriodEnd()">今天经期结束</button>
         </div>
 
         <!-- 每日状态记录 -->
         <div class="daily-log-card" id="dailyLogCard">
           <div class="daily-log-header" onclick="toggleDailyLog()">
-            <span>📝 今日状态</span>
+            <span>今日状态</span>
             <span class="daily-log-toggle" id="dailyLogToggle">▼</span>
           </div>
           <div class="daily-log-body" id="dailyLogBody" style="display:none">
@@ -926,13 +945,13 @@ body {
             <div class="log-section">
               <input type="text" id="logNotesInput" class="log-notes-input" placeholder="备注（可选）">
             </div>
-            <button class="action-btn primary log-save-btn" onclick="saveDailyLog()">💾 保存今日状态</button>
+            <button class="action-btn primary log-save-btn" onclick="saveDailyLog()">保存今日状态</button>
           </div>
         </div>
 
         <!-- 近期状态 -->
         <div class="recent-logs-card" id="recentLogsCard">
-          <div class="section-label">📊 近期状态</div>
+          <div class="section-label">近期状态</div>
           <div id="recentLogsList" style="display:flex;flex-direction:column;gap:6px">
             <div style="color:var(--text-dim);font-size:12px;padding:8px">暂无记录</div>
           </div>
@@ -940,7 +959,7 @@ body {
 
         <!-- 体重追踪 -->
         <div class="tracker-card" id="weightTrackerCard">
-          <div class="section-label">⚖️ 体重追踪</div>
+          <div class="section-label">体重追踪</div>
           <div class="weight-current">
             <div class="weight-value" id="weightValue">--<span class="weight-unit">kg</span></div>
             <div class="weight-trend" id="weightTrend">暂无数据</div>
@@ -954,7 +973,7 @@ body {
 
         <!-- 喝水打卡 -->
         <div class="tracker-card" id="waterTrackerCard">
-          <div class="section-label">💧 今日喝水</div>
+          <div class="section-label">今日喝水</div>
           <div class="water-progress">
             <div class="water-bar" id="waterBar"></div>
             <div class="water-count" id="waterCount">0/8 杯</div>
@@ -964,13 +983,13 @@ body {
 
         <!-- 皮肤状态 -->
         <div class="tracker-card" id="skinTrackerCard">
-          <div class="section-label">✨ 今日皮肤</div>
+          <div class="section-label">今日皮肤</div>
           <div class="skin-status" id="skinStatus">
-            <div class="skin-option" onclick="selectSkin(this,'很好')">😊 很好</div>
-            <div class="skin-option" onclick="selectSkin(this,'一般')">😐 一般</div>
-            <div class="skin-option" onclick="selectSkin(this,'出油')">💦 出油</div>
-            <div class="skin-option" onclick="selectSkin(this,'长痘')">😣 长痘</div>
-            <div class="skin-option" onclick="selectSkin(this,'干燥')">🏜️ 干燥</div>
+            <div class="skin-option" onclick="selectSkin(this,'很好')">很好</div>
+            <div class="skin-option" onclick="selectSkin(this,'一般')">一般</div>
+            <div class="skin-option" onclick="selectSkin(this,'出油')">出油</div>
+            <div class="skin-option" onclick="selectSkin(this,'长痘')">长痘</div>
+            <div class="skin-option" onclick="selectSkin(this,'干燥')">干燥</div>
           </div>
           <div class="skin-tips" id="skinTips"></div>
         </div>
@@ -983,13 +1002,13 @@ body {
         <div class="advice-card" id="adviceCard">
           <div class="advice-title">📋 当前阶段建议</div>
           <div id="adviceContent"><div class="advice-item">记录至少2次完整经期后查看个性化建议</div></div>
-          <button class="ask-ai-btn" onclick="askAIAboutPhase()">💬 让AI助手详细解答</button>
+          <button class="ask-ai-btn" onclick="askAIAboutPhase()">让AI助手详细解答</button>
         </div>
         <div class="calendar-card">
           <div class="cal-header">
-            <button class="cal-nav" onclick="changeCalMonth(-1)">‹</button>
+            <button class="cal-nav" onclick="changeCalMonth(-1)"></button>
             <div class="cal-title" id="calTitle"></div>
-            <button class="cal-nav" onclick="changeCalMonth(1)">›</button>
+            <button class="cal-nav" onclick="changeCalMonth(1)"></button>
           </div>
           <div class="cal-grid" id="calGrid"></div>
         </div>
@@ -997,7 +1016,7 @@ body {
 
       <!-- Period History -->
       <div class="right-panel">
-        <div class="section-label">📅 经期历史</div>
+        <div class="section-label">经期历史</div>
         <div id="historyList" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
     </div>
@@ -1020,9 +1039,9 @@ body {
           </div>
         </div>
         <div class="action-row">
-          <button class="action-btn secondary" onclick="logWorkout('力量训练', this)">🏋️ 力量训练</button>
-          <button class="action-btn secondary" onclick="logWorkout('有氧运动', this)">🏃 有氧运动</button>
-          <button class="action-btn secondary" onclick="logWorkout('拉伸恢复', this)">🧘 拉伸恢复</button>
+          <button class="action-btn secondary" onclick="logWorkout('力量训练', this)">力量训练</button>
+          <button class="action-btn secondary" onclick="logWorkout('有氧运动', this)">有氧运动</button>
+          <button class="action-btn secondary" onclick="logWorkout('拉伸恢复', this)">拉伸恢复</button>
         </div>
         <div class="stats-row">
           <div class="stat-card"><div class="stat-val" id="mStatStreak">0</div><div class="stat-label">连续打卡(天)</div></div>
@@ -1030,15 +1049,15 @@ body {
           <div class="stat-card"><div class="stat-val" id="mStatTotal">0</div><div class="stat-label">累计训练</div></div>
         </div>
         <div class="advice-card">
-          <div class="advice-title">💪 训练建议</div>
+          <div class="advice-title">训练建议</div>
           <div id="mAdviceContent"><div class="advice-item">记录训练后查看个性化建议</div></div>
-          <button class="ask-ai-btn" onclick="askAIAboutWorkout()">💬 让AI教练制定计划</button>
+          <button class="ask-ai-btn" onclick="askAIAboutWorkout()">让AI教练制定计划</button>
         </div>
       </div>
 
       <!-- 身体围度 -->
       <div class="right-panel">
-        <div class="section-label">📏 身体围度</div>
+        <div class="section-label">身体围度</div>
         <div class="body-measure-grid">
           <div class="body-measure-item"><div class="field-label">胸围</div><input type="number" class="field-input" id="bmChest" step="0.1" placeholder="--"><span class="body-measure-unit">cm</span></div>
           <div class="body-measure-item"><div class="field-label">腰围</div><input type="number" class="field-input" id="bmWaist" step="0.1" placeholder="--"><span class="body-measure-unit">cm</span></div>
@@ -1049,17 +1068,17 @@ body {
         </div>
 
         <!-- 训练类型分布 -->
-        <div class="section-label">📊 训练类型分布</div>
+        <div class="section-label">训练类型分布</div>
         <div id="workoutDistribution">
           <div style="color:var(--text-dim);font-size:12px;padding:4px 0">暂无训练数据</div>
         </div>
 
         <!-- 本周训练热力图 -->
-        <div class="section-label">🗓️ 近4周训练</div>
+        <div class="section-label">近4周训练</div>
         <div id="workoutHeatmap"></div>
 
         <!-- 训练记录 -->
-        <div class="section-label">📅 训练记录</div>
+        <div class="section-label">训练记录</div>
         <div id="mHistoryList" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
     </div>
@@ -1068,7 +1087,7 @@ body {
     <div class="left-panel-stack">
       <div class="profile-panel compact">
         <div class="profile-header">
-          <div class="profile-avatar-lg" id="mProfileAvatar">💪</div>
+          <div class="profile-avatar-lg" id="mProfileAvatar"></div>
           <div id="mProfileUsername" style="font-size:14px;font-weight:600">访客</div>
           <div id="mProfileStatus" style="font-size:10px;color:var(--text-dim)">未登录</div>
         </div>
@@ -1089,8 +1108,8 @@ body {
         <div class="field-group"><div class="field-label">训练目标</div><select class="field-select" id="mgoal"><option>增肌</option><option>减脂</option><option>塑形</option><option>体能提升</option><option>保持健康</option></select></div>
         <div class="field-group"><div class="field-label">运动频率</div><select class="field-select" id="mexerciseFreq"><option>几乎不运动</option><option>每周1-2次</option><option>每周3-4次</option><option>每天运动</option></select></div>
         <div class="field-group"><div class="field-label">健身经验</div><select class="field-select" id="mfitnessLevel"><option>新手</option><option>中级</option><option>进阶</option></select></div>
-        <button class="save-btn" onclick="saveProfile()" id="msaveBtn">💾 保存信息</button>
-        <div class="unsaved-hint" id="munsavedHint">⚠️ 信息已修改，请保存</div>
+        <button class="save-btn" onclick="saveProfile()" id="msaveBtn">保存信息</button>
+        <div class="unsaved-hint" id="munsavedHint">信息已修改，请保存</div>
       </div>
       <!-- Chat removed, using shared chat panel -->
     </div>
@@ -1124,13 +1143,13 @@ body {
     </div>
     <div class="chat-messages" id="messages"></div>
     <div class="chat-suggestions" id="suggestionsBar"></div>
-    <div class="chat-img-preview" id="imgPreviewWrap"><div class="img-preview"><img id="imgPreview" src=""><div class="img-remove" onclick="removeImage()">✕</div></div></div>
+    <div class="chat-img-preview" id="imgPreviewWrap"><div class="img-preview"><img id="imgPreview" src=""><div class="img-remove" onclick="removeImage()"></div></div></div>
     <div class="chat-input-bar">
       <input type="text" id="chatInput" placeholder="问我任何健身或饮食问题..." onkeydown="if(event.key==='Enter')sendMsg()">
-      <button class="icon-btn" id="voiceBtn" onclick="toggleVoice()">🎤</button>
-      <button class="icon-btn" onclick="document.getElementById('imgUpload').click()">📷</button>
+      <button class="icon-btn" id="voiceBtn" onclick="toggleVoice()"></button>
+      <button class="icon-btn" onclick="document.getElementById('imgUpload').click()"></button>
       <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImgUpload(event)">
-      <button class="send-btn" onclick="sendMsg()">➤</button>
+      <button class="send-btn" onclick="sendMsg()"></button>
     </div>
   </div>
   </div><!-- close page-right -->
@@ -1139,7 +1158,7 @@ body {
 <!-- Login Modal -->
 <div class="modal-overlay" id="loginModal" style="display:none">
   <div class="modal">
-    <div style="font-size:36px;margin-bottom:8px">🌸</div>
+    <div style="font-size:36px;margin-bottom:8px" id="loginBrandIcon"></div>
     <h2>FitHer · 她健康</h2>
     <p>登录后保存你的健康档案</p>
     <div class="modal-tabs">
@@ -1167,7 +1186,7 @@ body {
 <!-- Setup Modal (新用户引导) -->
 <div class="setup-overlay" id="setupModal" style="display:none">
   <div class="setup-modal">
-    <button class="setup-close" id="setupCloseBtn" onclick="closeSetup()" style="display:none">✕</button>
+    <button class="setup-close" id="setupCloseBtn" onclick="closeSetup()" style="display:none"></button>
     <h2 id="setupTitle">👋 欢迎使用</h2>
     <div class="setup-sub" id="setupSub">花1分钟完善资料，获得个性化建议</div>
     <div class="setup-step-indicator" id="setupDots">
@@ -1283,8 +1302,8 @@ body {
   </div>
 </div>
 <div class="feedback-panel" id="feedbackPanel">
-  <button class="feedback-close" onclick="toggleFeedback()">✕</button>
-  <h3 style="color:#fff;font-size:16px;margin-bottom:4px">💬 产品反馈</h3>
+  <button class="feedback-close" onclick="toggleFeedback()"></button>
+  <h3 style="color:#fff;font-size:16px;margin-bottom:4px">产品反馈</h3>
   <p style="color:var(--text-dim);font-size:12px;margin-bottom:16px">你的建议帮助我们变得更好</p>
   <div class="feedback-option" onclick="this.classList.toggle('selected')">🐛 发现了 bug</div>
   <div class="feedback-option" onclick="this.classList.toggle('selected')">💡 功能建议</div>
@@ -1294,7 +1313,7 @@ body {
   <textarea class="feedback-textarea" placeholder="详细描述你遇到的问题或建议..."></textarea>
   <input type="text" placeholder="联系方式（选填）" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;padding:8px 12px;font-size:12px;outline:none;width:100%;margin-bottom:10px">
   <button class="feedback-submit" onclick="submitFeedback()">提交反馈</button>
-  <div class="feedback-thanks" id="feedbackThanks">✅ 感谢你的反馈！💕</div>
+  <div class="feedback-thanks" id="feedbackThanks">感谢你的反馈</div>
 </div>
 
 <script>
@@ -1303,26 +1322,66 @@ let token = null;
 let currentGender = "female";
 let feedbackOpen = false;
 let uploadedAvatarUrl = null;
-let currentAvatar = "🌸";
+let currentAvatar = "";
 let uploadedImageFile = null;
 let isRecording = false;
 let recognition = null;
+
+// ===== SVG ICON SYSTEM =====
+const ICONS = {
+  brand: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-1.5 2-4 3-6 3 0 3 1 6 3 8s5 3 3 7c2-1 4-3 4-5 0 2 2 4 4 5-2-4 1-5 3-7s3-5 3-8c-2 0-4.5-1-6-3-0.5 1.5-1.5 2.5-2.5 3C14 5.5 13 4.5 12 3z"/></svg>`,
+  save: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
+  period: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 2"/></svg>`,
+  check: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>`,
+  edit: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  chat: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
+  chart: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>`,
+  weight: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><path d="M6 21l1.5-12h9L18 21H6z"/></svg>`,
+  water: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>`,
+  skin: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707"/><circle cx="12" cy="12" r="4"/></svg>`,
+  strength: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5L3 10l3.5 3.5M17.5 6.5L21 10l-3.5 3.5M6.5 10h11"/><rect x="8" y="7" width="2" height="6" rx="0.5"/><rect x="14" y="7" width="2" height="6" rx="0.5"/></svg>`,
+  cardio: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 4L8 14h4l-1 6 5-10h-4l1-6z"/></svg>`,
+  stretch: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="4" r="2"/><path d="M12 6v4m-4 2l4-2 4 2M8 12v5l-2 3m8-8v5l2 3"/></svg>`,
+  mic: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2m7 9v3"/></svg>`,
+  camera: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  send: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  close: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  warning: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  heart: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+  measure: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12h4m4 0h4m4 0h4"/><path d="M6 8v8m4-10v12m4-8v4"/></svg>`,
+  calendar: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  tips: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  ask: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>`,
+  feedback: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>`,
+  arrowLeft: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`,
+  arrowRight: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`,
+  plus: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  user: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  trend: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  fire: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c4-3 7-6.5 7-10.5C19 7 15 2 12 2S5 7 5 11.5C5 15.5 8 19 12 22z"/><path d="M12 22c-1.5-1.5-2.5-3.5-2.5-5.5C9.5 14 11 12 12 12s2.5 2 2.5 4.5c0 2-1 4-2.5 5.5z"/></svg>`
+};
+
+// Helper: get icon HTML with size
+function icon(name, size = 16) {
+  const svg = ICONS[name] || '';
+  return svg.replace('class="icon"', `class="icon" width="${size}" height="${size}" style="width:${size}px;height:${size}px;vertical-align:middle;display:inline-block"`);
+}
 
 // ===== 助手配置 =====
 const ASSISTANTS = {
   xiaojian: {
     name: "小健", desc: "你的专属力量训练专家",
-    intro: "你好！我是小健 💪 你的专属力量训练专家～专注于健身动作指导、增肌减脂训练计划。让我们一起变强！",
+    intro: "你好，我是小健，你的专属力量训练专家。专注于健身动作指导、增肌减脂训练计划。有什么问题尽管问我。",
     svg36: `<svg width="36" height="36" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#1e3a5f"/><circle cx="24" cy="18" r="9" fill="#ffd699"/><ellipse cx="24" cy="38" rx="13" ry="9" fill="#2a5298"/><circle cx="20" cy="17" r="1.5" fill="#333"/><circle cx="28" cy="17" r="1.5" fill="#333"/><path d="M21 21 Q24 23 27 21" stroke="#c97" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`
   },
   xiaokang: {
     name: "小康", desc: "你的专属营养饮食顾问",
-    intro: "你好！我是小康 💕 你的专属营养饮食顾问～擅长根据你的身体状况定制饮食方案。问我任何健身饮食问题！",
+    intro: "你好，我是小康，你的专属营养饮食顾问。擅长根据你的身体状况定制饮食方案，有什么想问的随时说。",
     svg36: `<svg width="36" height="36" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#5f1e3a"/><circle cx="24" cy="18" r="9" fill="#ffd699"/><ellipse cx="24" cy="38" rx="13" ry="9" fill="#c44dff"/><circle cx="20" cy="17" r="1.5" fill="#333"/><circle cx="28" cy="17" r="1.5" fill="#333"/><path d="M21 21 Q24 23.5 27 21" stroke="#c97" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`
   },
   shiqing: {
     name: "十七", desc: "你的专属健康生活向导",
-    intro: "喵～我是十七 🐱 关注你的整体健康：睡眠、压力、饮食、运动平衡。生活要健康，也要开心！",
+    intro: "你好，我是十七，关注你的整体健康：睡眠、压力、饮食、运动平衡。生活要健康，也要开心。",
     svg36: `<svg width="36" height="36" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#1e3a1e"/><circle cx="24" cy="20" r="11" fill="#f5deb3"/><ellipse cx="15" cy="12" rx="4" ry="5" fill="#f5deb3"/><ellipse cx="33" cy="12" rx="4" ry="5" fill="#f5deb3"/><circle cx="20" cy="19" r="2" fill="#333"/><circle cx="28" cy="19" r="2" fill="#333"/><ellipse cx="24" cy="23" rx="2" ry="1.5" fill="#ffaaaa"/><path d="M19 25 Q24 28 29 25" stroke="#c97" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`
   }
 };
@@ -1358,8 +1417,8 @@ function applyGenderTheme() {
   document.body.classList.toggle("male-theme", !isFemale);
   document.getElementById("femaleRecordPage").classList.toggle("active-layout", isFemale);
   document.getElementById("maleRecordPage").classList.toggle("active-layout", !isFemale);
-  document.getElementById("genderToggle").textContent = isFemale ? "👧 女性模式" : "👦 男性模式";
-  document.getElementById("navBrandIcon").textContent = isFemale ? "🌸" : "💪";
+  document.getElementById("genderToggle").textContent = isFemale ? "女性模式" : "男性模式";
+  document.getElementById("navBrandIcon").innerHTML = icon(isFemale ? "brand" : "fire", 20);
   document.getElementById("navBrandText").textContent = isFemale ? "FitHer" : "FitHim";
   updateBMI();
   if (isFemale) { loadPeriodData(); loadDailyLogs(); }
@@ -1420,7 +1479,7 @@ function addMsgToDOM(role, text, assistantId) {
   const div = document.createElement("div");
   div.className = `msg ${role}`;
   const aid = assistantId || currentAssistant;
-  const icon = role === "bot" ? ASSISTANTS[aid].svg36 : `<span style="font-size:16px">${currentAvatar}</span>`;
+  const icon = role === "bot" ? ASSISTANTS[aid].svg36 : (currentAvatar ? `<img src="${currentAvatar}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">` : `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center">${icon("user", 18)}</div>`);
   const content = role === "bot" ? renderMarkdown(text) : text;
   div.innerHTML = `<div class="msg-icon">${icon}</div><div class="msg-bubble">${content}</div>`;
   msgs.appendChild(div);
@@ -1472,7 +1531,7 @@ async function sendMsg() {
   const query = input.value.trim();
   if (!query && !uploadedImageFile) return;
   input.value = "";
-  appendMsg("user", query || "📷 请分析这张图片");
+  appendMsg("user", query || "请分析这张图片");
 
   if (uploadedImageFile) {
     const lastMsg = document.getElementById("messages").lastElementChild;
@@ -1579,9 +1638,9 @@ function toggleVoice() {
   if (isRecording) { recognition.stop(); return; }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR(); recognition.lang = "zh-CN";
-  recognition.onstart = () => { isRecording = true; document.getElementById("voiceBtn").classList.add("recording"); document.getElementById("voiceBtn").textContent = "🔴"; };
+  recognition.onstart = () => { isRecording = true; document.getElementById("voiceBtn").classList.add("recording"); document.getElementById("voiceBtn").innerHTML = icon("period", 18); };
   recognition.onresult = e => { document.getElementById("chatInput").value = e.results[0][0].transcript; };
-  recognition.onend = () => { isRecording = false; document.getElementById("voiceBtn").classList.remove("recording"); document.getElementById("voiceBtn").textContent = "🎤"; };
+  recognition.onend = () => { isRecording = false; document.getElementById("voiceBtn").classList.remove("recording"); document.getElementById("voiceBtn").innerHTML = icon("mic", 18); };
   recognition.start();
 }
 
@@ -1659,7 +1718,7 @@ function markProfileDirty() {
   const hint = currentGender === "male" ? "munsavedHint" : "unsavedHint";
   const btn = currentGender === "male" ? "msaveBtn" : "saveProfileBtn";
   document.getElementById(hint).style.display = "block";
-  document.getElementById(btn).textContent = "💾 保存信息 *";
+  document.getElementById(btn).textContent = "保存信息 *";
 }
 
 // Listen for changes on profile inputs
@@ -1705,16 +1764,16 @@ async function saveProfile() {
       body: JSON.stringify(profile)
     });
     if (res.ok) {
-      el.textContent = "✅ 已保存";
+      el.textContent = "已保存";
       document.getElementById(hint).style.display = "none";
       const username = document.getElementById("navUsername").textContent;
       saveProfileForUser(username, getProfileFields(), currentGender);
-      setTimeout(() => { el.textContent = "💾 保存信息"; }, 2000);
+      setTimeout(() => { el.textContent = "保存信息"; }, 2000);
     } else {
-      el.textContent = "❌ 保存失败";
-      setTimeout(() => { el.textContent = "💾 保存信息"; }, 2000);
+      el.textContent = "保存失败";
+      setTimeout(() => { el.textContent = "保存信息"; }, 2000);
     }
-  } catch(e) { el.textContent = "❌ 连接失败"; setTimeout(() => { el.textContent = "💾 保存信息"; }, 2000); }
+  } catch(e) { el.textContent = "连接失败"; setTimeout(() => { el.textContent = "保存信息"; }, 2000); }
 }
 
 // ===== STATE =====
@@ -1736,7 +1795,7 @@ function loadState() {
   token = localStorage.getItem("fitherToken") || null;
   const username = localStorage.getItem("fitherUsername");
   currentGender = localStorage.getItem("fitherGender") || "female";
-  currentAvatar = localStorage.getItem("fitherAvatar") || "🌸";
+  currentAvatar = localStorage.getItem("fitherAvatar") || "";
   currentAssistant = localStorage.getItem("fitherAssistant") || "xiaokang";
   // 对话历史按用户读取
   if (username && username !== "访客") {
@@ -1924,7 +1983,7 @@ function renderPeriodDashboard(pred, records, stats) {
     document.getElementById("historyList").innerHTML = records.map(r => `
       <div class="history-item">
         <div><div class="history-dates">${r.start_date} → ${r.end_date || '<span style="color:#fbbf24">进行中</span>'}</div><div class="history-dur">${r.duration ? r.duration + '天' : ''}</div></div>
-        <button class="history-del" onclick="deletePeriodRecord(${r.id})">✕</button>
+        <button class="history-del" onclick="deletePeriodRecord(${r.id})"></button>
       </div>`).join("");
   }
 }
@@ -1967,34 +2026,34 @@ function changeCalMonth(delta) { calMonth += delta; if (calMonth > 11) { calMont
 // ===== TODAY TIPS (周期感知提醒) =====
 const TIPS_DATA = {
   "经期": {
-    skin: { icon: "🧴", text: "皮肤敏感期，用温和洁面，避免刷酸和去角质" },
-    diet: { icon: "🍵", text: "喝温热红糖姜水，补铁吃红肉菠菜，忌冷饮" },
-    exercise: { icon: "🧘", text: "避免剧烈运动，散步/瑜伽/拉伸即可" },
-    mood: { icon: "💜", text: "允许自己慢下来，多休息，情绪波动是正常的" }
+    skin: { icon: "skin", label: "皮肤", text: "皮肤敏感期，用温和洁面，避免刷酸和去角质" },
+    diet: { icon: "water", label: "饮食", text: "喝温热红糖姜水，补铁吃红肉菠菜，忌冷饮" },
+    exercise: { icon: "stretch", label: "运动", text: "避免剧烈运动，散步/瑜伽/拉伸即可" },
+    mood: { icon: "heart", label: "情绪", text: "允许自己慢下来，多休息，情绪波动是正常的" }
   },
   "卵泡期": {
-    skin: { icon: "✨", text: "皮肤状态最佳期！适合尝试新护肤品和面膜" },
-    diet: { icon: "🥗", text: "代谢旺盛，减脂黄金期，高蛋白+复合碳水" },
-    exercise: { icon: "🏋️", text: "精力充沛！适合高强度训练、HIIT、挑战新动作" },
-    mood: { icon: "🔥", text: "状态好，适合社交、学习新技能、做重要决定" }
+    skin: { icon: "skin", label: "皮肤", text: "皮肤状态最佳期，适合尝试新护肤品和面膜" },
+    diet: { icon: "water", label: "饮食", text: "代谢旺盛，减脂黄金期，高蛋白+复合碳水" },
+    exercise: { icon: "strength", label: "运动", text: "精力充沛，适合高强度训练、HIIT、挑战新动作" },
+    mood: { icon: "fire", label: "情绪", text: "状态好，适合社交、学习新技能、做重要决定" }
   },
   "排卵期": {
-    skin: { icon: "💧", text: "注意防晒，皮肤代谢快，做好保湿" },
-    diet: { icon: "🥚", text: "多补蛋白质和叶酸，保持水分摄入" },
-    exercise: { icon: "💪", text: "体能巅峰！适合挑战PR、团队运动" },
-    mood: { icon: "🌟", text: "自信心最强，适合面试、社交、表达自己" }
+    skin: { icon: "skin", label: "皮肤", text: "注意防晒，皮肤代谢快，做好保湿" },
+    diet: { icon: "water", label: "饮食", text: "多补蛋白质和叶酸，保持水分摄入" },
+    exercise: { icon: "cardio", label: "运动", text: "体能巅峰，适合挑战PR、团队运动" },
+    mood: { icon: "trend", label: "情绪", text: "自信心最强，适合面试、社交、表达自己" }
   },
   "黄体早期": {
-    skin: { icon: "🧴", text: "开始出油，注意清洁，可用控油产品" },
-    diet: { icon: "🥜", text: "适当增加碳水，补镁（坚果/深色蔬菜）" },
-    exercise: { icon: "🏃", text: "状态稳定，保持中等强度有氧+力量训练" },
-    mood: { icon: "😊", text: "情绪平稳期，适合处理日常事务和规划" }
+    skin: { icon: "skin", label: "皮肤", text: "开始出油，注意清洁，可用控油产品" },
+    diet: { icon: "water", label: "饮食", text: "适当增加碳水，补镁（坚果/深色蔬菜）" },
+    exercise: { icon: "cardio", label: "运动", text: "状态稳定，保持中等强度有氧+力量训练" },
+    mood: { icon: "tips", label: "情绪", text: "情绪平稳期，适合处理日常事务和规划" }
   },
   "黄体期": {
-    skin: { icon: "😣", text: "易长痘出油，清淡护肤，少吃甜食和奶制品" },
-    diet: { icon: "🍫", text: "少盐防水肿，少糖控痘，黑巧克力可以缓解馋嘴" },
-    exercise: { icon: "🚶", text: "适合低强度运动：散步、瑜伽、普拉提" },
-    mood: { icon: "🫂", text: "可能情绪低落，做喜欢的事，和朋友聊天" }
+    skin: { icon: "skin", label: "皮肤", text: "易长痘出油，清淡护肤，少吃甜食和奶制品" },
+    diet: { icon: "water", label: "饮食", text: "少盐防水肿，少糖控痘，黑巧克力可以缓解馋嘴" },
+    exercise: { icon: "stretch", label: "运动", text: "适合低强度运动：散步、瑜伽、普拉提" },
+    mood: { icon: "heart", label: "情绪", text: "可能情绪低落，做喜欢的事，和朋友聊天" }
   }
 };
 
@@ -2016,9 +2075,9 @@ function renderTodayTips(phase, day, daysUntil) {
   const tips = TIPS_DATA[phase];
   grid.innerHTML = Object.values(tips).map(t => `
     <div class="tips-item">
-      <span class="ti-icon">${t.icon}</span>
+      <span class="ti-icon">${icon(t.icon, 16)}</span>
       <div class="ti-content">
-        <div class="ti-label">${t.icon === "🧴" || t.icon === "✨" || t.icon === "💧" || t.icon === "😣" ? "皮肤" : t.icon === "🍵" || t.icon === "🥗" || t.icon === "🥚" || t.icon === "🥜" || t.icon === "🍫" ? "饮食" : t.icon === "🧘" || t.icon === "🏋️" || t.icon === "💪" || t.icon === "🏃" || t.icon === "🚶" ? "运动" : "情绪"}</div>
+        <div class="ti-label">${t.label}</div>
         <div class="ti-text">${t.text}</div>
       </div>
     </div>
@@ -2162,7 +2221,7 @@ async function saveDailyLog() {
       body: JSON.stringify(data)
     });
     const result = await res.json();
-    showToast(result.message || "✅ 已保存");
+    showToast(result.message || "已保存");
     // Reset form
     resetDailyLogForm();
     loadDailyLogs();
@@ -2199,16 +2258,16 @@ async function loadDailyLogs() {
       if (log.flow) tags.push(`经量:${log.flow}`);
       if (log.pain_level !== null && log.pain_level !== undefined) tags.push(`痛经:${painLabels[log.pain_level]}`);
       if (log.mood) tags.push(log.mood);
-      if (log.energy) tags.push("⚡".repeat(log.energy));
+      if (log.energy) tags.push(`精力:${"●".repeat(log.energy)}${"○".repeat(5-log.energy)}`);
       log.symptoms.forEach(s => tags.push(s));
-      if (log.notes) tags.push(`📝${log.notes}`);
+      if (log.notes) tags.push(`备注:${log.notes}`);
       
       return `<div class="daily-log-item">
         <div>
           <div class="dl-date">${log.log_date}</div>
           <div class="dl-tags">${tags.map(t => `<span class="dl-tag">${t}</span>`).join("")}</div>
         </div>
-        <button class="dl-del" onclick="deleteDailyLog(${log.id})">✕</button>
+        <button class="dl-del" onclick="deleteDailyLog(${log.id})"></button>
       </div>`;
     }).join("");
   } catch(e) {
@@ -2248,7 +2307,7 @@ function logWorkout(type, btn) {
   const log = getWorkoutLog();
   log.unshift({ date: new Date().toISOString().split('T')[0], type, time: new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'}) });
   saveWorkoutLog(log);
-  showToast(`✅ 已记录${type}`);
+  showToast(`已记录${type}`);
   // Flash animation on clicked button
   if (btn) { btn.classList.add('flash'); setTimeout(() => btn.classList.remove('flash'), 300); }
   renderWorkoutPanel();
@@ -2299,8 +2358,8 @@ document.addEventListener("change", (e) => {
 function renderWorkoutDistribution(log) {
   const el = document.getElementById("workoutDistribution");
   if (!log || log.length === 0) { el.innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:4px 0">暂无训练数据</div>'; return; }
-  const types = { "力量训练": { count: 0, color: "#3b82f6", icon: "🏋️" }, "有氧运动": { count: 0, color: "#10b981", icon: "🏃" }, "拉伸恢复": { count: 0, color: "#a78bfa", icon: "🧘" } };
-  log.forEach(r => { if (types[r.type]) types[r.type].count++; else { if (!types[r.type]) types[r.type] = { count: 1, color: "#fbbf24", icon: "💪" }; } });
+  const types = { "力量训练": { count: 0, color: "#3b82f6", icon: icon("strength", 14) }, "有氧运动": { count: 0, color: "#10b981", icon: icon("cardio", 14) }, "拉伸恢复": { count: 0, color: "#a78bfa", icon: icon("stretch", 14) } };
+  log.forEach(r => { if (types[r.type]) types[r.type].count++; else { if (!types[r.type]) types[r.type] = { count: 1, color: "#fbbf24", icon: icon("fire", 14) }; } });
   const total = log.length;
   el.innerHTML = Object.entries(types).map(([name, d]) => {
     if (d.count === 0) return '';
@@ -2367,12 +2426,12 @@ function renderWorkoutPanel() {
   if (log.length === 0) {
     document.getElementById("mHistoryList").innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:8px">暂无记录，点击上方按钮开始打卡</div>';
   } else {
-    const typeIcons = { "力量训练": "🏋️", "有氧运动": "🏃", "拉伸恢复": "🧘" };
+    const typeIcons = { "力量训练": icon("strength", 16), "有氧运动": icon("cardio", 16), "拉伸恢复": icon("stretch", 16) };
     document.getElementById("mHistoryList").innerHTML = log.map((r, i) => `
       <div class="workout-log-item">
-        <div class="workout-type-badge">${typeIcons[r.type] || "💪"}</div>
+        <div class="workout-type-badge">${typeIcons[r.type] || icon("fire", 16)}</div>
         <div style="flex:1"><div style="font-size:12px">${r.type}</div><div style="font-size:10px;color:var(--text-dim)">${r.date} ${r.time}</div></div>
-        <button class="history-del" onclick="deleteWorkout(${i})">✕</button>
+        <button class="history-del" onclick="deleteWorkout(${i})"></button>
       </div>`).join("");
   }
 }
@@ -2593,7 +2652,7 @@ function renderWaterTracker() {
   let html = "";
   for (let i = 1; i <= 8; i++) {
     const filled = i <= count;
-    html += `<div class="water-cup ${filled ? 'filled' : ''}" onclick="toggleWater(${i})">${filled ? '💧' : '○'}</div>`;
+    html += `<div class="water-cup ${filled ? 'filled' : ''}" onclick="toggleWater(${i})">${filled ? icon("water", 14) : icon("water", 14)}</div>`;
   }
   cupsEl.innerHTML = html;
 }
@@ -2615,11 +2674,11 @@ function toggleWater(n) {
 
 // ===== SKIN TRACKER =====
 const SKIN_TIPS = {
-  "很好": "✨ 皮肤状态不错！继续保持当前的护肤习惯，记得防晒哦~",
-  "一般": "💡 皮肤状态平稳，可以敷个补水面膜，保持充足睡眠。",
-  "出油": "💦 皮肤出油较多，建议：\n• 用温和控油洁面\n• 避免厚重面霜\n• 少吃甜食和奶制品\n• 黄体期常见，正常现象",
-  "长痘": "😣 长痘了，建议：\n• 不要挤痘痘！\n• 用含水杨酸的产品点涂\n• 清淡饮食，多喝水\n• 黄体期/经前容易长痘",
-  "干燥": "🏜️ 皮肤干燥，建议：\n• 加强保湿，用面霜锁水\n• 避免过度清洁\n• 经期常见，多补水"
+  "很好": "皮肤状态不错，继续保持当前的护肤习惯，记得防晒。",
+  "一般": "皮肤状态平稳，可以敷个补水面膜，保持充足睡眠。",
+  "出油": "皮肤出油较多，建议：\n- 用温和控油洁面\n- 避免厚重面霜\n- 少吃甜食和奶制品\n- 黄体期常见，正常现象",
+  "长痘": "长痘了，建议：\n- 不要挤痘痘\n- 用含水杨酸的产品点涂\n- 清淡饮食，多喝水\n- 黄体期/经前容易长痘",
+  "干燥": "皮肤干燥，建议：\n- 加强保湿，用面霜锁水\n- 避免过度清洁\n- 经期常见，多补水"
 };
 
 function selectSkin(el, status) {
@@ -2684,7 +2743,7 @@ function handleAvatarUpload(event) {
     
     // Update all avatar displays
     updateAvatarDisplay(dataUrl);
-    showToast("✅ 头像已更新");
+    showToast("头像已更新");
   };
   reader.readAsDataURL(file);
   
@@ -2720,6 +2779,8 @@ function loadSavedAvatar() {
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
+  // 初始化SVG图标
+  initIcons();
   loadState();
   updateBMI();
   updateSuggestions();
@@ -2729,6 +2790,55 @@ document.addEventListener("DOMContentLoaded", () => {
   renderWaterTracker();
   loadSkinStatus();
 });
+
+function initIcons() {
+  // 导航栏品牌图标
+  const brandIcon = document.getElementById("navBrandIcon");
+  if (brandIcon) brandIcon.innerHTML = icon("brand", 20);
+  
+  // 导航栏用户头像
+  const navAvatar = document.getElementById("navAvatar");
+  if (navAvatar) navAvatar.innerHTML = icon("user", 16);
+  
+  // 个人资料头像
+  const profileAvatar = document.getElementById("profileAvatarLg");
+  if (profileAvatar) profileAvatar.innerHTML = icon("user", 32);
+  
+  // 男性模式头像
+  const maleAvatar = document.getElementById("mProfileAvatar");
+  if (maleAvatar) maleAvatar.innerHTML = icon("strength", 32);
+  
+  // 聊天按钮
+  const voiceBtn = document.getElementById("voiceBtn");
+  if (voiceBtn) voiceBtn.innerHTML = icon("mic", 18);
+  
+  const cameraBtn = voiceBtn?.nextElementSibling;
+  if (cameraBtn) cameraBtn.innerHTML = icon("camera", 18);
+  
+  const sendBtn = document.querySelector(".send-btn");
+  if (sendBtn) sendBtn.innerHTML = icon("send", 18);
+  
+  // 登录模态框品牌图标
+  const loginBrand = document.getElementById("loginBrandIcon");
+  if (loginBrand) loginBrand.innerHTML = icon("brand", 36);
+  
+  // 设置关闭按钮
+  const setupClose = document.getElementById("setupCloseBtn");
+  if (setupClose) setupClose.innerHTML = icon("close", 16);
+  
+  // 反馈关闭按钮
+  const feedbackClose = document.querySelector(".feedback-close");
+  if (feedbackClose) feedbackClose.innerHTML = icon("close", 14);
+  
+  // 图片移除按钮
+  const imgRemove = document.querySelector(".img-remove");
+  if (imgRemove) imgRemove.innerHTML = icon("close", 10);
+  
+  // 日历导航按钮
+  const calNavBtns = document.querySelectorAll(".cal-nav");
+  if (calNavBtns[0]) calNavBtns[0].innerHTML = icon("arrowLeft", 16);
+  if (calNavBtns[1]) calNavBtns[1].innerHTML = icon("arrowRight", 16);
+}
 
 // 页面刷新/关闭前自动保存当前档案
 window.addEventListener("beforeunload", () => {
@@ -2838,7 +2948,7 @@ function finalizeSetup() {
     document.getElementById("genderToggle").style.display = "";
   }
   applyGenderTheme();
-  showToast("🎉 设置完成！开始使用吧");
+  showToast("设置完成");
 }
 
 function needSetup() {
@@ -2902,7 +3012,7 @@ function settingsToggleGender() {
     const saved = loadProfileForUser(username, currentGender);
     if (saved) setProfileFields(saved);
   }
-  document.getElementById("settingsGenderBtn").textContent = currentGender === "female" ? "👧 女生 → 切换" : "👦 男生 → 切换";
+  document.getElementById("settingsGenderBtn").textContent = currentGender === "female" ? "女生 → 切换" : "男生 → 切换";
   showToast(currentGender === "female" ? "已切换到女生模式" : "已切换到男生模式");
 }
 
@@ -2920,7 +3030,7 @@ function clearChatMemory() {
   // 重新加载当前助手（会显示intro消息）
   switchAssistant(currentAssistant);
   closeSettings();
-  showToast("✅ 对话记忆已清除");
+  showToast("对话记忆已清除");
 }
 
 function doLogout() {
