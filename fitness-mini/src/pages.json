@@ -1,0 +1,59 @@
+{
+  "pages": [
+    { "path": "pages/login/login", "style": { "navigationBarTitleText": "登录" } },
+    { "path": "pages/index/index", "style": { "navigationBarTitleText": "FitHer" } },
+    { "path": "pages/period/period", "style": { "navigationBarTitleText": "经期", "navigationStyle": "custom" } },
+    { "path": "pages/analysis/analysis", "style": { "navigationBarTitleText": "分析", "navigationStyle": "custom" } },
+    { "path": "pages/message/message", "style": { "navigationBarTitleText": "消息", "navigationStyle": "custom" } },
+    { "path": "pages/profile/profile", "style": { "navigationBarTitleText": "我的", "navigationStyle": "custom" } },
+    { "path": "pages/chat/chat", "style": { "navigationBarTitleText": "AI助手", "navigationStyle": "custom" } },
+    { "path": "pages/post/create", "style": { "navigationBarTitleText": "发帖" } },
+    { "path": "pages/post/detail", "style": { "navigationBarTitleText": "帖子详情" } },
+    { "path": "pages/profile/user-profile", "style": { "navigationBarTitleText": "个人主页" } },
+    { "path": "pages/settings/settings", "style": { "navigationBarTitleText": "设置" } }
+  ],
+  "globalStyle": {
+    "navigationBarTitleText": "FitHer",
+    "navigationBarBackgroundColor": "#e8837c",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#fff5f5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#e8837c",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tab-home.png",
+        "selectedIconPath": "static/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/period/period",
+        "text": "经期",
+        "iconPath": "static/tab-period.png",
+        "selectedIconPath": "static/tab-period-active.png"
+      },
+      {
+        "pagePath": "pages/analysis/analysis",
+        "text": "分析",
+        "iconPath": "static/tab-analysis.png",
+        "selectedIconPath": "static/tab-analysis-active.png"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "text": "消息",
+        "iconPath": "static/tab-message.png",
+        "selectedIconPath": "static/tab-message-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/tab-profile.png",
+        "selectedIconPath": "static/tab-profile-active.png"
+      }
+    ]
+  }
+}
