@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FitHer · 她健康</title>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#e8837c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FitHer">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2026,34 +2033,34 @@ function changeCalMonth(delta) { calMonth += delta; if (calMonth > 11) { calMont
 // ===== TODAY TIPS (周期感知提醒) =====
 const TIPS_DATA = {
   "经期": {
-    skin: { icon: "skin", label: "皮肤", text: "皮肤敏感期，用温和洁面，避免刷酸和去角质" },
-    diet: { icon: "water", label: "饮食", text: "喝温热红糖姜水，补铁吃红肉菠菜，忌冷饮" },
-    exercise: { icon: "stretch", label: "运动", text: "避免剧烈运动，散步/瑜伽/拉伸即可" },
-    mood: { icon: "heart", label: "情绪", text: "允许自己慢下来，多休息，情绪波动是正常的" }
+    skin: { icon: "skin", label: "皮肤", text: "皮肤敏感期，用温和洁面，避免刷酸和去角质🧴" },
+    diet: { icon: "water", label: "饮食", text: "喝温热红糖姜水，补铁吃红肉菠菜，忌冷饮☕" },
+    exercise: { icon: "stretch", label: "运动", text: "避免剧烈运动，散步/瑜伽/拉伸即可🧘" },
+    mood: { icon: "heart", label: "情绪", text: "允许自己慢下来，多休息，情绪波动是正常的🤍" }
   },
   "卵泡期": {
-    skin: { icon: "skin", label: "皮肤", text: "皮肤状态最佳期，适合尝试新护肤品和面膜" },
-    diet: { icon: "water", label: "饮食", text: "代谢旺盛，减脂黄金期，高蛋白+复合碳水" },
-    exercise: { icon: "strength", label: "运动", text: "精力充沛，适合高强度训练、HIIT、挑战新动作" },
+    skin: { icon: "skin", label: "皮肤", text: "皮肤状态最佳期✨ 适合尝试新护肤品和面膜" },
+    diet: { icon: "water", label: "饮食", text: "代谢旺盛，减脂黄金期🔥 高蛋白+复合碳水" },
+    exercise: { icon: "strength", label: "运动", text: "精力充沛，适合高强度训练、HIIT、挑战新动作💪" },
     mood: { icon: "fire", label: "情绪", text: "状态好，适合社交、学习新技能、做重要决定" }
   },
   "排卵期": {
-    skin: { icon: "skin", label: "皮肤", text: "注意防晒，皮肤代谢快，做好保湿" },
-    diet: { icon: "water", label: "饮食", text: "多补蛋白质和叶酸，保持水分摄入" },
-    exercise: { icon: "cardio", label: "运动", text: "体能巅峰，适合挑战PR、团队运动" },
-    mood: { icon: "trend", label: "情绪", text: "自信心最强，适合面试、社交、表达自己" }
+    skin: { icon: "skin", label: "皮肤", text: "注意防晒☀️ 皮肤代谢快，做好保湿" },
+    diet: { icon: "water", label: "饮食", text: "多补蛋白质和叶酸，保持水分摄入💧" },
+    exercise: { icon: "cardio", label: "运动", text: "体能巅峰，适合挑战PR、团队运动🏆" },
+    mood: { icon: "trend", label: "情绪", text: "自信心最强，适合面试、社交、表达自己✨" }
   },
   "黄体早期": {
     skin: { icon: "skin", label: "皮肤", text: "开始出油，注意清洁，可用控油产品" },
-    diet: { icon: "water", label: "饮食", text: "适当增加碳水，补镁（坚果/深色蔬菜）" },
+    diet: { icon: "water", label: "饮食", text: "适当增加碳水，补镁🥜 坚果/深色蔬菜" },
     exercise: { icon: "cardio", label: "运动", text: "状态稳定，保持中等强度有氧+力量训练" },
-    mood: { icon: "tips", label: "情绪", text: "情绪平稳期，适合处理日常事务和规划" }
+    mood: { icon: "tips", label: "情绪", text: "情绪平稳期，适合处理日常事务和规划📋" }
   },
   "黄体期": {
     skin: { icon: "skin", label: "皮肤", text: "易长痘出油，清淡护肤，少吃甜食和奶制品" },
-    diet: { icon: "water", label: "饮食", text: "少盐防水肿，少糖控痘，黑巧克力可以缓解馋嘴" },
-    exercise: { icon: "stretch", label: "运动", text: "适合低强度运动：散步、瑜伽、普拉提" },
-    mood: { icon: "heart", label: "情绪", text: "可能情绪低落，做喜欢的事，和朋友聊天" }
+    diet: { icon: "water", label: "饮食", text: "少盐防水肿，少糖控痘，黑巧克力可以缓解馋嘴🍫" },
+    exercise: { icon: "stretch", label: "运动", text: "适合低强度运动：散步、瑜伽、普拉提🧘" },
+    mood: { icon: "heart", label: "情绪", text: "可能情绪低落，做喜欢的事，和朋友聊天💬" }
   }
 };
 
@@ -2674,11 +2681,11 @@ function toggleWater(n) {
 
 // ===== SKIN TRACKER =====
 const SKIN_TIPS = {
-  "很好": "皮肤状态不错，继续保持当前的护肤习惯，记得防晒。",
-  "一般": "皮肤状态平稳，可以敷个补水面膜，保持充足睡眠。",
+  "很好": "皮肤状态不错✨ 继续保持当前的护肤习惯，记得防晒☀️",
+  "一般": "皮肤状态平稳，可以敷个补水面膜，保持充足睡眠💤",
   "出油": "皮肤出油较多，建议：\n- 用温和控油洁面\n- 避免厚重面霜\n- 少吃甜食和奶制品\n- 黄体期常见，正常现象",
-  "长痘": "长痘了，建议：\n- 不要挤痘痘\n- 用含水杨酸的产品点涂\n- 清淡饮食，多喝水\n- 黄体期/经前容易长痘",
-  "干燥": "皮肤干燥，建议：\n- 加强保湿，用面霜锁水\n- 避免过度清洁\n- 经期常见，多补水"
+  "长痘": "长痘了别慌：\n- 不要挤痘痘\n- 用含水杨酸的产品点涂\n- 清淡饮食，多喝水\n- 黄体期/经前容易长痘",
+  "干燥": "皮肤干燥，建议：\n- 加强保湿，用面霜锁水💧\n- 避免过度清洁\n- 经期常见，多补水"
 };
 
 function selectSkin(el, status) {
@@ -3057,6 +3064,18 @@ function doLogout() {
   showToast("已退出登录");
   // 重新应用性别主题，刷新当前用户（访客）的数据
   applyGenderTheme();
+}
+</script>
+<script>
+// Register Service Worker for PWA
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then(reg => {
+      console.log("SW registered:", reg.scope);
+    }).catch(err => {
+      console.log("SW registration failed:", err);
+    });
+  });
 }
 </script>
 </body>

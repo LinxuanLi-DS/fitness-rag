@@ -18,7 +18,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    hashed_password = Column(String, nullable=True)
+    openid = Column(String, unique=True, nullable=True, index=True)
 
     # 基本信息
     age = Column(Integer, nullable=True)

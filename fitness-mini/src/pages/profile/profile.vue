@@ -2,6 +2,10 @@
   <view class="profile-page">
     <!-- 顶部 -->
     <view class="user-header">
+      <view class="header-bg" @tap="changeBg">
+        <image v-if="headerBg" :src="headerBg" class="bg-img" mode="aspectFill" />
+        <view v-else class="bg-default"></view>
+      </view>
       <view class="header-actions">
         <view class="settings-btn" @tap="goSettings">
           <text class="settings-icon">⚙</text>
@@ -14,7 +18,10 @@
         @tap="chooseAvatar"
       />
       <text class="user-name">{{ username }}</text>
-      <text class="user-bio">{{ profile.goal || '编辑个人简介' }}</text>
+      <view class="bio-row" @tap="editBio">
+        <text class="user-bio">{{ bio || '点击编辑个人简介...' }}</text>
+        <text class="bio-edit">✏️</text>
+      </view>
       <view class="mode-badge">
         <text class="mode-text">{{ currentModeName }}</text>
       </view>
@@ -143,6 +150,8 @@ import { api } from "@/utils/api";
 
 const username = ref("");
 const avatar = ref("");
+const bio = ref("");
+const headerBg = ref("");
 const saving = ref(false);
 const editMode = ref(false);
 const genders = ["女", "男"];
@@ -195,6 +204,8 @@ const bmiPercent = computed(() => {
 onShow(() => {
   username.value = uni.getStorageSync("username") || "";
   avatar.value = uni.getStorageSync("avatar") || "";
+  bio.value = uni.getStorageSync("user_bio") || "";
+  headerBg.value = uni.getStorageSync("user_header_bg") || "";
   appMode.value = uni.getStorageSync("appMode") || "period";
   loadProfile();
 });
@@ -233,6 +244,44 @@ function chooseAvatar() {
     success: (res) => {
       avatar.value = res.tempFilePaths[0];
       uni.setStorageSync("avatar", avatar.value);
+    },
+  });
+}
+
+function editBio() {
+  uni.showModal({
+    title: "编辑个人简介",
+    editable: true,
+    placeholderText: "介绍一下自己吧...",
+    content: bio.value,
+    success: (res) => {
+      if (res.confirm) {
+        bio.value = res.content || "";
+        uni.setStorageSync("user_bio", bio.value);
+        uni.showToast({ title: "已保存", icon: "success" });
+      }
+    },
+  });
+}
+
+function changeBg() {
+  uni.showActionSheet({
+    itemList: ["选择图片", "恢复默认"],
+    success: (res) => {
+      if (res.tapIndex === 0) {
+        uni.chooseImage({
+          count: 1,
+          sizeType: ["compressed"],
+          success: (imgRes) => {
+            headerBg.value = imgRes.tempFilePaths[0];
+            uni.setStorageSync("user_header_bg", headerBg.value);
+          },
+        });
+      } else {
+        headerBg.value = "";
+        uni.removeStorageSync("user_header_bg");
+        uni.showToast({ title: "已恢复默认", icon: "none" });
+      }
     },
   });
 }
@@ -308,15 +357,35 @@ function logout() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 88rpx 32rpx 32rpx;
+  padding: 0;
+  padding-bottom: 32rpx;
   background: linear-gradient(135deg, #e8837c, #d4625a);
   position: relative;
+  overflow: hidden;
+}
+
+.header-bg {
+  width: 100%;
+  height: 280rpx;
+  position: relative;
+}
+
+.bg-img {
+  width: 100%;
+  height: 100%;
+}
+
+.bg-default {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e8837c, #d4625a);
 }
 
 .header-actions {
   position: absolute;
   top: 88rpx;
   right: 32rpx;
+  z-index: 2;
 }
 
 .settings-btn {
@@ -349,7 +418,17 @@ function logout() {
 .user-bio {
   font-size: 24rpx;
   color: rgba(255,255,255,0.8);
+}
+
+.bio-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
   margin-bottom: 16rpx;
+}
+
+.bio-edit {
+  font-size: 20rpx;
 }
 
 .mode-badge {

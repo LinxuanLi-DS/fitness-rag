@@ -39,3 +39,24 @@ def root():
 @app.get("/survey-page")
 def survey_page():
     return FileResponse("frontend/survey.html")
+
+# PWA files - must be served at root
+@app.get("/manifest.json")
+def pwa_manifest():
+    return FileResponse("frontend/manifest.json", media_type="application/manifest+json")
+
+@app.get("/sw.js")
+def pwa_sw():
+    return FileResponse("frontend/sw.js", media_type="application/javascript")
+
+@app.get("/icon-192.png")
+def pwa_icon192():
+    return FileResponse("frontend/icon-192.png", media_type="image/png")
+
+@app.get("/icon-512.png")
+def pwa_icon512():
+    return FileResponse("frontend/icon-512.png", media_type="image/png")
+
+@app.get("/icon.svg")
+def pwa_icon_svg():
+    return FileResponse("frontend/icon.svg", media_type="image/svg+xml")

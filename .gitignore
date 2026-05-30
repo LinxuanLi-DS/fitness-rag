@@ -1,19 +1,55 @@
-venv/
-.env
+# Python
 __pycache__/
-*.pyc
-.DS_Store
-data/raw/
-chromadb/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
 
 # Database
 *.db
+*.sqlite
+*.sqlite3
 
-# Survey data (privacy)
-data/survey_results.json
+# Node
+node_modules/
+fitness-mini/dist/
+fitness-mini/.hbuilderx/
 
-# Test files
-test_*.py
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
 
 # Logs
 *.log
+logs/
+
+# Data
+data/chroma/
+data/*.csv
+data/*.xlsx
+
+# Screenshots (too large for GitHub)
+docs/screenshots/*.png
+docs/screenshots/*.jpg
+
+# Temporary
+*.tmp
+.cache/

@@ -4,12 +4,13 @@ from sqlalchemy.orm import Session
 from jose import jwt
 from datetime import datetime, timedelta
 import bcrypt
-import os
 import sys
+import os
+import httpx
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from api.models.user import User, get_db, init_db
-from api.models.schemas import UserRegister, UserLogin, UserProfileUpdate, UserOut, Token
+from api.models.schemas import UserRegister, UserLogin, WxLogin, UserProfileUpdate, UserOut, Token
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -117,3 +118,46 @@ def get_me(
 
 
 init_db()
+
+# 微信小程序登录
+WX_APPID = os.getenv("WX_APPID", "")
+WX_SECRET = os.getenv("WX_SECRET", "")
+
+@router.post("/wx-login")
+async def wx_login(data: WxLogin, db: Session = Depends(get_db)):
+    """微信一键登录：用code换openid，自动创建或查找用户"""
+    if not WX_APPID or not WX_SECRET:
+        raise HTTPException(status_code=500, detail="微信小程序未配置appid/secret")
+    
+    # 用code向微信服务器换openid和session_key
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            "https://api.weixin.qq.com/sns/jscode2session",
+            params={
+                "appid": WX_APPID,
+                "secret": WX_SECRET,
+                "js_code": data.code,
+                "grant_type": "authorization_code",
+            },
+        )
+        wx_data = resp.json()
+    
+    if "errcode" in wx_data:
+        raise HTTPException(status_code=400, detail=f"微信登录失败: {wx_data.get('errmsg', '未知错误')}")
+    
+    openid = wx_data["openid"]
+    
+    # 查找或创建用户
+    user = db.query(User).filter(User.openid == openid).first()
+    if not user:
+        # 自动创建用户，用户名用openid后8位
+        auto_username = f"wx_{openid[:8]}"
+        # 确保用户名不重复
+        while db.query(User).filter(User.username == auto_username).first():
+            auto_username = f"wx_{openid[:8]}_{hash(openid) % 1000}"
+        user = User(username=auto_username, openid=openid)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    
+    return {"access_token": create_token(user.id), "username": user.username, "token_type": "bearer"}
