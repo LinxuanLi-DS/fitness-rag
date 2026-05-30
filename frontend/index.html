@@ -1599,15 +1599,28 @@ function getProfile() {
 
 function getProfileFields() {
   const prefix = currentGender === "male" ? "m" : "";
-  return {
+  const fields = {
     age: document.getElementById(prefix + "age").value,
     weight: document.getElementById(prefix + "weight").value,
     height: document.getElementById(prefix + "height").value,
+    targetWeight: document.getElementById(prefix + "targetWeight").value,
     goal: document.getElementById(prefix + "goal").value,
     fitnessLevel: document.getElementById(prefix + "fitnessLevel").value,
     exerciseFreq: document.getElementById(prefix + "exerciseFreq").value,
     gender: currentGender
   };
+  
+  // 女性专属字段
+  if (currentGender === "female") {
+    fields.lifeStage = document.getElementById("lifeStage").value;
+    fields.cyclePhase = document.getElementById("cyclePhase").value;
+  }
+  
+  // 通用字段
+  fields.sleep = document.getElementById("sleep").value;
+  fields.dietary = document.getElementById("dietary").value;
+  
+  return fields;
 }
 
 function setProfileFields(p) {
@@ -1616,9 +1629,21 @@ function setProfileFields(p) {
   if (p.age) document.getElementById(prefix + "age").value = p.age;
   if (p.weight) document.getElementById(prefix + "weight").value = p.weight;
   if (p.height) document.getElementById(prefix + "height").value = p.height;
+  if (p.targetWeight) document.getElementById(prefix + "targetWeight").value = p.targetWeight;
   if (p.goal) document.getElementById(prefix + "goal").value = p.goal;
   if (p.fitnessLevel) document.getElementById(prefix + "fitnessLevel").value = p.fitnessLevel;
   if (p.exerciseFreq) document.getElementById(prefix + "exerciseFreq").value = p.exerciseFreq;
+  
+  // 女性专属字段
+  if (p.gender === "female") {
+    if (p.lifeStage) document.getElementById("lifeStage").value = p.lifeStage;
+    if (p.cyclePhase) document.getElementById("cyclePhase").value = p.cyclePhase;
+  }
+  
+  // 通用字段
+  if (p.sleep) document.getElementById("sleep").value = p.sleep;
+  if (p.dietary) document.getElementById("dietary").value = p.dietary;
+  
   updateBMI();
 }
 
