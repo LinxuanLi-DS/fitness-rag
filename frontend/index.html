@@ -1850,6 +1850,8 @@ async function submitAuth() {
     if (saved) { setProfileFields(saved); }
     else { fetchServerProfile(); }
     saveState();
+    // 重新应用性别主题，加载该用户的训练/经期数据
+    applyGenderTheme();
     switchAssistant(currentAssistant);
     // 初始化新增追踪器
     renderWeightTracker();
@@ -2943,6 +2945,8 @@ function doLogout() {
   // 显示登录
   document.getElementById("loginModal").style.display = "flex";
   showToast("已退出登录");
+  // 重新应用性别主题，刷新当前用户（访客）的数据
+  applyGenderTheme();
 }
 </script>
 </body>
