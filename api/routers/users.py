@@ -20,6 +20,19 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7天
 security = HTTPBearer(auto_error=False)
 
 
+def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> int:
+    """从JWT token中提取用户ID，供其他路由复用"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="请先登录")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        return int(payload.get("sub"))
+    except:
+        raise HTTPException(status_code=401, detail="登录已过期，请重新登录")
+
+
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 

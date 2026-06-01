@@ -63,3 +63,27 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     answer: str
+
+
+class DailyLogCreate(BaseModel):
+    log_date: str  # YYYY-MM-DD
+    flow: Optional[str] = None
+    color: Optional[str] = None
+    symptoms: Optional[list] = None  # ["痛经", "头痛"]
+    temperature: Optional[float] = None
+    water: Optional[int] = 0
+    weight: Optional[float] = None
+
+
+class DailyLogOut(BaseModel):
+    id: int
+    log_date: str
+    flow: Optional[str] = None
+    color: Optional[str] = None
+    symptoms: Optional[list] = None
+    temperature: Optional[float] = None
+    water: Optional[int] = 0
+    weight: Optional[float] = None
+
+    class Config:
+        from_attributes = True

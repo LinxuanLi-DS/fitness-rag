@@ -916,6 +916,45 @@ function loadDailyStatus() {
   // Logged days
   const logged = uni.getStorageSync(`logged_days_${username}`);
   loggedDays.value = logged ? new Set(JSON.parse(logged)) : new Set();
+
+  // 从后端拉取今日数据（覆盖本地）
+  syncFromServer(dateStr);
+}
+
+async function syncFromServer(dateStr: string) {
+  const token = uni.getStorageSync("token");
+  if (!token) return;
+  try {
+    const resp = await new Promise<any>((resolve, reject) => {
+      uni.request({
+        url: `http://127.0.0.1:8000/daily/log/${dateStr}`,
+        method: "GET",
+        header: { "Authorization": `Bearer ${token}` },
+        success: (res) => resolve(res),
+        fail: reject,
+      });
+    });
+    if (resp.statusCode === 200 && resp.data) {
+      const d = resp.data;
+      if (d.flow) { todayFlow.value = d.flow; flowSaved.value = true; }
+      if (d.color) { todayColor.value = d.color; colorSaved.value = true; }
+      if (d.symptoms && d.symptoms.length > 0) { todaySymptoms.value = d.symptoms; symptomsSaved.value = true; }
+      if (d.temperature) { todayTemp.value = String(d.temperature); tempSaved.value = true; }
+      if (d.water > 0) { waterCount.value = d.water; waterSaved.value = true; }
+      if (d.weight) { todayWeight.value = String(d.weight); weightSaved.value = true; }
+      // 同步到本地
+      const username = uni.getStorageSync("username") || "";
+      const prefix = `daily_${username}_${dateStr}`;
+      uni.setStorageSync(`${prefix}_flow`, todayFlow.value);
+      uni.setStorageSync(`${prefix}_color`, todayColor.value);
+      uni.setStorageSync(`${prefix}_symptoms`, JSON.stringify(todaySymptoms.value));
+      uni.setStorageSync(`${prefix}_temp`, todayTemp.value);
+      uni.setStorageSync(`${prefix}_water`, String(waterCount.value));
+      uni.setStorageSync(`${prefix}_weight`, todayWeight.value);
+    }
+  } catch (e) {
+    console.log("syncFromServer failed:", e);
+  }
 }
 
 function saveDailyField(field: string, value: any) {
@@ -927,6 +966,40 @@ function saveDailyField(field: string, value: any) {
   logged.add(dateStr);
   loggedDays.value = logged;
   uni.setStorageSync(`logged_days_${username}`, JSON.stringify(Array.from(logged)));
+
+  // 异步同步到后端
+  syncToServer(dateStr);
+}
+
+function syncToServer(dateStr: string) {
+  const token = uni.getStorageSync("token");
+  if (!token) return;
+  const username = uni.getStorageSync("username") || "";
+  const prefix = `daily_${username}_${dateStr}`;
+
+  const symptoms = uni.getStorageSync(`${prefix}_symptoms`);
+  const data = {
+    log_date: dateStr,
+    flow: uni.getStorageSync(`${prefix}_flow`) || null,
+    color: uni.getStorageSync(`${prefix}_color`) || null,
+    symptoms: symptoms ? JSON.parse(symptoms) : null,
+    temperature: parseFloat(uni.getStorageSync(`${prefix}_temp`)) || null,
+    water: parseInt(uni.getStorageSync(`${prefix}_water`)) || 0,
+    weight: parseFloat(uni.getStorageSync(`${prefix}_weight`)) || null,
+  };
+
+  uni.request({
+    url: "http://127.0.0.1:8000/daily/log",
+    method: "POST",
+    header: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    data,
+    fail: (err) => {
+      console.log("syncToServer failed:", err);
+    },
+  });
 }
 
 // 经期操作

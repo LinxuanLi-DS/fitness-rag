@@ -39,10 +39,11 @@ class User(Base):
 
 def init_db():
     Base.metadata.create_all(bind=engine)
-    # 确保经期记录表也被创建
+    # 确保所有表都被创建
     try:
         from api.models.period import PeriodRecord
         from api.models.period_daily_log import PeriodDailyLog
+        from api.models.daily_log import DailyLog
         Base.metadata.create_all(bind=engine)
     except Exception:
         pass
