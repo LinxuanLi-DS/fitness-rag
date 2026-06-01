@@ -190,7 +190,54 @@ function clearCache() {
     if (res.confirm) { uni.clearStorageSync(); uni.showToast({ title: "已清除", icon: "success" }); }
   }});
 }
-function changePassword() { uni.showToast({ title: "修改密码（开发中）", icon: "none" }); }
+function changePassword() {
+  uni.showModal({
+    title: "修改密码",
+    editable: true,
+    placeholderText: "输入原密码",
+    success: (res1) => {
+      if (!res1.confirm || !res1.content) return;
+      const oldPassword = res1.content;
+      uni.showModal({
+        title: "修改密码",
+        editable: true,
+        placeholderText: "输入新密码（至少6位）",
+        success: async (res2) => {
+          if (!res2.confirm || !res2.content) return;
+          const newPassword = res2.content;
+          if (newPassword.length < 6) {
+            uni.showToast({ title: "新密码至少6位", icon: "none" });
+            return;
+          }
+          try {
+            const token = uni.getStorageSync("token");
+            const resp = await new Promise<any>((resolve, reject) => {
+              uni.request({
+                url: "http://127.0.0.1:8000/users/change-password",
+                method: "POST",
+                header: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`,
+                },
+                data: { old_password: oldPassword, new_password: newPassword },
+                success: (res) => resolve(res),
+                fail: reject,
+              });
+            });
+            if (resp.statusCode === 200) {
+              uni.showToast({ title: "密码修改成功", icon: "success" });
+            } else {
+              const msg = resp.data?.detail || "修改失败";
+              uni.showToast({ title: msg, icon: "none" });
+            }
+          } catch (e) {
+            uni.showToast({ title: "网络错误", icon: "none" });
+          }
+        },
+      });
+    },
+  });
+}
 function deleteAccount() {
   uni.showModal({ title: "注销账号", content: "注销后所有数据将被删除，确定要注销吗？", success: (res) => {
     if (res.confirm) { uni.showToast({ title: "账号注销功能开发中", icon: "none" }); }

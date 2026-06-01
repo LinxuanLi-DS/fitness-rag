@@ -16,6 +16,11 @@ class WxLogin(BaseModel):
     code: str
 
 
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str
+
+
 class UserProfileUpdate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None

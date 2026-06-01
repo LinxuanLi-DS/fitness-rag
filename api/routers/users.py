@@ -10,7 +10,7 @@ import httpx
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from api.models.user import User, get_db, init_db
-from api.models.schemas import UserRegister, UserLogin, WxLogin, UserProfileUpdate, UserOut, Token
+from api.models.schemas import UserRegister, UserLogin, WxLogin, ChangePassword, UserProfileUpdate, UserOut, Token
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -115,6 +115,39 @@ def get_me(
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
     return user
+
+
+@router.post("/change-password")
+def change_password(
+    data: ChangePassword,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """修改密码"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="请先登录")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+    except:
+        raise HTTPException(status_code=401, detail="登录已过期，请重新登录")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+
+    if not user.hashed_password:
+        raise HTTPException(status_code=400, detail="该账号通过微信登录，无法修改密码")
+
+    if not verify_password(data.old_password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="原密码错误")
+
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="新密码至少6位")
+
+    user.hashed_password = hash_password(data.new_password)
+    db.commit()
+    return {"message": "密码修改成功"}
 
 
 init_db()
