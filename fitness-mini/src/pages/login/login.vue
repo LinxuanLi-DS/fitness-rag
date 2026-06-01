@@ -153,7 +153,7 @@ async function handleRegister() {
 .app-name {
   font-size: 52rpx;
   font-weight: 700;
-  color: #d4625a;
+  color: var(--primary-dark);
   margin-bottom: 12rpx;
 }
 
@@ -220,7 +220,7 @@ async function handleRegister() {
   border-radius: 16rpx;
   padding: 28rpx 32rpx;
   font-size: 30rpx;
-  border: 2rpx solid #f0d0ce;
+  border: 2rpx solid var(--primary-border);
 }
 
 .login-btn {
@@ -230,7 +230,7 @@ async function handleRegister() {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   border: none;
   border-radius: 16rpx;
@@ -250,7 +250,7 @@ async function handleRegister() {
 
 .register-text {
   font-size: 26rpx;
-  color: #e8837c;
+  color: var(--primary);
 }
 
 .footer {

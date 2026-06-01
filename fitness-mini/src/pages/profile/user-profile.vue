@@ -209,7 +209,7 @@ function showList(type: string) {
 .bg-default {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 .bg-edit-hint {
@@ -261,13 +261,13 @@ function showList(type: string) {
 
 .follow-btn {
   background: rgba(232,131,124,0.1);
-  border: 2rpx solid #e8837c;
+  border: 2rpx solid var(--primary);
   padding: 12rpx 48rpx;
   border-radius: 28rpx;
 }
 
 .follow-text {
-  color: #e8837c;
+  color: var(--primary);
   font-size: 28rpx;
 }
 
@@ -346,8 +346,8 @@ function showList(type: string) {
 
 .post-tag {
   font-size: 22rpx;
-  color: #e8837c;
-  background: #fff0ef;
+  color: var(--primary);
+  background: var(--primary-light);
   padding: 4rpx 12rpx;
   border-radius: 12rpx;
 }

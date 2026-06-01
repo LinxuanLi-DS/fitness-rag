@@ -1228,7 +1228,7 @@ function deleteRecord(h: any, idx: number) {
 
 <style scoped>
 .period-page { min-height: 100vh; background: #fff5f5; padding-bottom: 160rpx; }
-.header { padding: 88rpx 32rpx 20rpx; background: linear-gradient(135deg, #e8837c, #d4625a); }
+.header { padding: 88rpx 32rpx 20rpx; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
 .header-title { font-size: 38rpx; font-weight: 600; color: #fff; display: block; margin-bottom: 16rpx; }
 .mode-row { display: flex; gap: 10rpx; }
 .mode-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4rpx; padding: 12rpx 8rpx; border-radius: 16rpx; background: rgba(255,255,255,0.12); }
@@ -1243,8 +1243,8 @@ function deleteRecord(h: any, idx: number) {
 .status-circle.pregnancy { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
 .status-circle.baby { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
 .status-circle.parenting { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
-.cycle-day { font-size: 44rpx; font-weight: 700; color: #d4625a; line-height: 1; }
-.cycle-label { font-size: 20rpx; color: #e8837c; }
+.cycle-day { font-size: 44rpx; font-weight: 700; color: var(--primary-dark); line-height: 1; }
+.cycle-label { font-size: 20rpx; color: var(--primary); }
 .status-info { flex: 1; }
 .status-phase { font-size: 30rpx; font-weight: 600; color: #333; display: block; margin-bottom: 6rpx; }
 .status-next { font-size: 24rpx; color: #999; }
@@ -1256,7 +1256,7 @@ function deleteRecord(h: any, idx: number) {
 
 /* Calendar */
 .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
-.cal-nav { font-size: 36rpx; color: #e8837c; padding: 8rpx 20rpx; }
+.cal-nav { font-size: 36rpx; color: var(--primary); padding: 8rpx 20rpx; }
 .cal-title { font-size: 28rpx; font-weight: 600; color: #333; }
 .cal-weekdays { display: flex; margin-bottom: 8rpx; }
 .cal-weekday { flex: 1; text-align: center; font-size: 22rpx; color: #bbb; }
@@ -1264,18 +1264,18 @@ function deleteRecord(h: any, idx: number) {
 .cal-cell { width: 14.28%; height: 72rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 .cal-cell.empty { pointer-events: none; }
 .cal-day { font-size: 26rpx; color: #333; }
-.cal-cell.today .cal-day { color: #e8837c; font-weight: 700; }
+.cal-cell.today .cal-day { color: var(--primary); font-weight: 700; }
 .cal-cell.period { background: rgba(232,131,124,0.12); border-radius: 8rpx; }
 .cal-cell.predicted { background: rgba(232,131,124,0.06); border-radius: 8rpx; }
 .cal-cell.logged { border-bottom: 3rpx solid #4caf50; }
 .cal-cell.ovulation { background: rgba(255,152,0,0.12); border-radius: 8rpx; }
-.cal-dot { width: 8rpx; height: 8rpx; border-radius: 50%; background: #e8837c; margin-top: 2rpx; }
+.cal-dot { width: 8rpx; height: 8rpx; border-radius: 50%; background: var(--primary); margin-top: 2rpx; }
 .cal-dot.ov-dot { background: #ff9800; }
 .cal-legend { display: flex; gap: 20rpx; margin-top: 16rpx; justify-content: center; }
 .legend-item { display: flex; align-items: center; gap: 6rpx; }
 .legend-dot { width: 14rpx; height: 14rpx; border-radius: 4rpx; }
 .legend-dot.period { background: rgba(232,131,124,0.3); }
-.legend-dot.predicted { background: rgba(232,131,124,0.1); border: 1rpx dashed #e8837c; }
+.legend-dot.predicted { background: rgba(232,131,124,0.1); border: 1rpx dashed var(--primary); }
 .legend-dot.logged { background: #4caf50; }
 .legend-dot.ov-dot { background: #ff9800; }
 .legend-dot.checkup { background: #66bb6a; }
@@ -1283,10 +1283,10 @@ function deleteRecord(h: any, idx: number) {
 
 .action-row { display: flex; gap: 16rpx; padding: 0 24rpx 20rpx; }
 .action-btn { flex: 1; border: none; border-radius: 20rpx; padding: 24rpx; font-size: 28rpx; }
-.action-btn.primary { background: linear-gradient(135deg, #e8837c, #d4625a); }
+.action-btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
 .btn-text { color: #fff; }
-.action-btn.secondary { background: #fff; border: 2rpx solid #f0d0ce; }
-.btn-text2 { color: #e8837c; }
+.action-btn.secondary { background: #fff; border: 2rpx solid var(--primary-border); }
+.btn-text2 { color: var(--primary); }
 
 .track-section { margin-bottom: 24rpx; }
 .track-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12rpx; }
@@ -1294,7 +1294,7 @@ function deleteRecord(h: any, idx: number) {
 .saved-tag { font-size: 22rpx; color: #4caf50; font-weight: 500; }
 .track-options { display: flex; flex-wrap: wrap; gap: 12rpx; }
 .track-opt { padding: 12rpx 24rpx; border-radius: 24rpx; font-size: 24rpx; background: #f8f0f0; color: #999; }
-.track-opt.active { background: #fff0ef; color: #e8837c; font-weight: 500; border: 1rpx solid #f0d0ce; }
+.track-opt.active { background: var(--primary-light); color: var(--primary); font-weight: 500; border: 1rpx solid var(--primary-border); }
 .track-opt.locked { opacity: 0.5; }
 .water-cup.locked { opacity: 0.6; }
 .color-opt { display: flex; align-items: center; gap: 8rpx; }
@@ -1314,13 +1314,13 @@ function deleteRecord(h: any, idx: number) {
 /* 备孕 */
 .progress-grid { display: flex; justify-content: space-around; }
 .progress-item { display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
-.progress-num { font-size: 40rpx; font-weight: 700; color: #e8837c; }
+.progress-num { font-size: 40rpx; font-weight: 700; color: var(--primary); }
 .progress-label { font-size: 22rpx; color: #999; }
 .ov-opt { display: flex; align-items: center; gap: 6rpx; }
 .ov-dot-icon { font-size: 24rpx; }
 .intimacy-row { display: flex; align-items: center; gap: 16rpx; padding: 16rpx; background: #f8f0f0; border-radius: 16rpx; }
 .intimacy-check { width: 40rpx; height: 40rpx; border-radius: 50%; border: 2rpx solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 24rpx; color: #fff; }
-.intimacy-check.checked { background: #e8837c; border-color: #e8837c; }
+.intimacy-check.checked { background: var(--primary); border-color: var(--primary); }
 .intimacy-text { font-size: 28rpx; color: #666; }
 .supplement-list { display: flex; flex-direction: column; gap: 12rpx; }
 .supplement-item { display: flex; align-items: center; padding: 16rpx; background: #fef7f6; border-radius: 16rpx; gap: 16rpx; }
@@ -1335,7 +1335,7 @@ function deleteRecord(h: any, idx: number) {
 .preg-info-row { display: flex; gap: 20rpx; }
 .preg-field { flex: 1; background: #fef7f6; border-radius: 16rpx; padding: 16rpx; display: flex; flex-direction: column; gap: 8rpx; }
 .preg-label { font-size: 22rpx; color: #999; }
-.preg-value { font-size: 28rpx; color: #e8837c; font-weight: 500; }
+.preg-value { font-size: 28rpx; color: var(--primary); font-weight: 500; }
 .baby-info { text-align: center; padding: 20rpx 0; }
 .baby-fruit { font-size: 80rpx; display: block; margin-bottom: 12rpx; }
 .baby-size { font-size: 28rpx; color: #333; display: block; margin-bottom: 8rpx; }
@@ -1348,40 +1348,40 @@ function deleteRecord(h: any, idx: number) {
 .checkup-content { font-size: 26rpx; color: #666; }
 .checkup-result { font-size: 22rpx; padding: 4rpx 12rpx; border-radius: 8rpx; }
 .checkup-result.normal { background: #e8f5e9; color: #4caf50; }
-.next-checkup { display: flex; justify-content: space-between; padding: 16rpx; background: #fff0ef; border-radius: 12rpx; margin-top: 16rpx; }
+.next-checkup { display: flex; justify-content: space-between; padding: 16rpx; background: var(--primary-light); border-radius: 12rpx; margin-top: 16rpx; }
 .next-label { font-size: 24rpx; color: #999; }
-.next-date { font-size: 24rpx; color: #e8837c; font-weight: 500; }
+.next-date { font-size: 24rpx; color: var(--primary); font-weight: 500; }
 .kick-row { display: flex; align-items: center; gap: 20rpx; }
 .kick-btn { width: 120rpx; height: 120rpx; border-radius: 50%; background: linear-gradient(135deg, #fce4ec, #f8bbd0); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.kick-num { font-size: 40rpx; font-weight: 700; color: #d4625a; }
+.kick-num { font-size: 40rpx; font-weight: 700; color: var(--primary-dark); }
 .kick-label { font-size: 20rpx; color: #999; }
 .kick-hint { font-size: 24rpx; color: #999; }
-.add-btn { background: #fff0ef; padding: 8rpx 20rpx; border-radius: 16rpx; }
-.add-btn-text { font-size: 24rpx; color: #e8837c; }
+.add-btn { background: var(--primary-light); padding: 8rpx 20rpx; border-radius: 16rpx; }
+.add-btn-text { font-size: 24rpx; color: var(--primary); }
 .empty-section { text-align: center; padding: 32rpx; }
 .empty-text { font-size: 26rpx; color: #ccc; }
 
 /* 育儿 */
 .baby-profile { display: flex; align-items: center; gap: 24rpx; margin-bottom: 20rpx; }
 .baby-avatar-edit { display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
-.baby-avatar-img { width: 100rpx; height: 100rpx; border-radius: 50%; border: 3rpx solid #f0d0ce; }
+.baby-avatar-img { width: 100rpx; height: 100rpx; border-radius: 50%; border: 3rpx solid var(--primary-border); }
 .baby-avatar-edit-text { font-size: 20rpx; color: #999; }
 .baby-detail { flex: 1; }
 .baby-name { font-size: 32rpx; font-weight: 600; color: #333; display: block; }
 .baby-age { font-size: 24rpx; color: #999; display: block; margin-top: 4rpx; }
-.baby-age-days { font-size: 24rpx; color: #e8837c; display: block; margin-top: 4rpx; }
+.baby-age-days { font-size: 24rpx; color: var(--primary); display: block; margin-top: 4rpx; }
 .baby-set-row { display: flex; gap: 12rpx; }
 .baby-set-item { flex: 1; background: #fef7f6; border-radius: 12rpx; padding: 12rpx; display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
 .baby-set-label { font-size: 22rpx; color: #999; }
-.baby-set-val { font-size: 24rpx; color: #e8837c; }
+.baby-set-val { font-size: 24rpx; color: var(--primary); }
 .milk-row { display: flex; align-items: center; gap: 20rpx; }
 .milk-btn { background: #f8f0f0; border-radius: 12rpx; padding: 12rpx 24rpx; }
-.milk-btn-text { font-size: 28rpx; color: #e8837c; font-weight: 500; }
+.milk-btn-text { font-size: 28rpx; color: var(--primary); font-weight: 500; }
 .milk-display { display: flex; align-items: baseline; gap: 4rpx; }
 .milk-num { font-size: 44rpx; font-weight: 700; color: #333; }
 .milk-unit { font-size: 24rpx; color: #999; }
 .sleep-summary { margin-bottom: 16rpx; }
-.sleep-total { font-size: 28rpx; color: #e8837c; font-weight: 500; }
+.sleep-total { font-size: 28rpx; color: var(--primary); font-weight: 500; }
 .growth-item { display: flex; justify-content: space-between; padding: 14rpx 0; border-bottom: 1rpx solid #f8f0f0; }
 .growth-date { font-size: 26rpx; color: #333; }
 .growth-data { display: flex; gap: 16rpx; }
@@ -1410,7 +1410,7 @@ function deleteRecord(h: any, idx: number) {
 .history-right { display: flex; align-items: center; gap: 12rpx; }
 .history-dur { font-size: 26rpx; color: #666; }
 .history-status { font-size: 22rpx; color: #999; background: #f8f0f0; padding: 4rpx 12rpx; border-radius: 12rpx; }
-.history-status.active { color: #e8837c; background: #fff0ef; }
-.delete-btn { width: 44rpx; height: 44rpx; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #fff0ef; }
-.delete-icon { color: #e8837c; font-size: 28rpx; }
+.history-status.active { color: var(--primary); background: var(--primary-light); }
+.delete-btn { width: 44rpx; height: 44rpx; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--primary-light); }
+.delete-icon { color: var(--primary); font-size: 28rpx; }
 </style>

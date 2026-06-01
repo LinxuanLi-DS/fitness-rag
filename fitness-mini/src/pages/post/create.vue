@@ -151,7 +151,7 @@ async function publish() {
   right: -12rpx;
   width: 40rpx;
   height: 40rpx;
-  background: #e8837c;
+  background: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -190,8 +190,8 @@ async function publish() {
 }
 
 .tag-item.active {
-  background: #fff0ef;
-  color: #e8837c;
+  background: var(--primary-light);
+  color: var(--primary);
   font-weight: 500;
 }
 
@@ -241,6 +241,6 @@ async function publish() {
 }
 
 .publish-btn.active {
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 </style>

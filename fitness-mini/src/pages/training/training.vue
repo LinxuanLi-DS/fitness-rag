@@ -143,8 +143,8 @@ function saveRecords() {
 }
 
 .type-tab.active {
-  background: #fff0ef;
-  color: #e8837c;
+  background: var(--primary-light);
+  color: var(--primary);
   font-weight: 500;
 }
 
@@ -158,12 +158,12 @@ function saveRecords() {
 }
 
 .exercise-item.done {
-  color: #e8837c;
+  color: var(--primary);
   text-decoration: line-through;
 }
 
 .check {
-  color: #e8837c;
+  color: var(--primary);
   font-weight: 700;
 }
 
@@ -181,7 +181,7 @@ function saveRecords() {
 }
 
 .record-type {
-  color: #e8837c;
+  color: var(--primary);
   font-weight: 500;
 }
 

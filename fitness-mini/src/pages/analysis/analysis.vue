@@ -327,7 +327,7 @@ onShow(() => {
 
 <style scoped>
 .analysis-page { min-height: 100vh; background: #fff5f5; padding-bottom: 160rpx; }
-.header { padding: 88rpx 32rpx 28rpx; background: linear-gradient(135deg, #e8837c, #d4625a); }
+.header { padding: 88rpx 32rpx 28rpx; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
 .header-title { font-size: 38rpx; font-weight: 600; color: #fff; display: block; }
 .header-sub { font-size: 24rpx; color: rgba(255,255,255,0.8); margin-top: 6rpx; }
 
@@ -336,12 +336,12 @@ onShow(() => {
 .no-data-icon { font-size: 120rpx; margin-bottom: 24rpx; }
 .no-data-title { font-size: 36rpx; font-weight: 600; color: #333; margin-bottom: 16rpx; }
 .no-data-desc { font-size: 26rpx; color: #999; text-align: center; line-height: 1.6; margin-bottom: 40rpx; }
-.go-record-btn { background: linear-gradient(135deg, #e8837c, #d4625a); color: #fff; border: none; border-radius: 32rpx; padding: 24rpx 60rpx; font-size: 30rpx; }
+.go-record-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border: none; border-radius: 32rpx; padding: 24rpx 60rpx; font-size: 30rpx; }
 
 .score-card { display: flex; align-items: center; background: #fff; border-radius: 24rpx; padding: 36rpx 32rpx; margin: -20rpx 24rpx 24rpx; box-shadow: 0 8rpx 32rpx rgba(232,131,124,0.12); }
 .score-circle { width: 140rpx; height: 140rpx; border-radius: 50%; background: linear-gradient(135deg, #fce4ec, #f8bbd0); display: flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 28rpx; }
-.score-num { font-size: 48rpx; font-weight: 700; color: #d4625a; line-height: 1; }
-.score-label { font-size: 20rpx; color: #e8837c; margin-top: 4rpx; }
+.score-num { font-size: 48rpx; font-weight: 700; color: var(--primary-dark); line-height: 1; }
+.score-label { font-size: 20rpx; color: var(--primary); margin-top: 4rpx; }
 .score-desc { flex: 1; }
 .score-status { font-size: 34rpx; font-weight: 600; color: #333; display: block; margin-bottom: 8rpx; }
 .score-tip { font-size: 24rpx; color: #999; line-height: 1.5; }
@@ -355,13 +355,13 @@ onShow(() => {
 .chart-bars { display: flex; justify-content: space-around; align-items: flex-end; height: 260rpx; }
 .bar-item { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
 .bar-val { font-size: 20rpx; color: #999; }
-.bar { width: 40rpx; background: linear-gradient(180deg, #e8837c, #f8bbd0); border-radius: 8rpx 8rpx 0 0; min-height: 20rpx; }
+.bar { width: 40rpx; background: linear-gradient(180deg, var(--primary), #f8bbd0); border-radius: 8rpx 8rpx 0 0; min-height: 20rpx; }
 .bar-label { font-size: 20rpx; color: #bbb; }
 
 .chart-summary { display: flex; justify-content: space-around; margin-top: 20rpx; padding-top: 20rpx; border-top: 1rpx solid #f8f0f0; }
 .summary-item { display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
 .summary-label { font-size: 22rpx; color: #999; }
-.summary-val { font-size: 28rpx; font-weight: 600; color: #e8837c; }
+.summary-val { font-size: 28rpx; font-weight: 600; color: var(--primary); }
 
 .empty-section { text-align: center; padding: 32rpx 0; }
 .empty-text { font-size: 26rpx; color: #ccc; }
@@ -377,7 +377,7 @@ onShow(() => {
 .symptom-val { font-size: 22rpx; color: #999; width: 120rpx; text-align: right; flex-shrink: 0; }
 
 .weight-trend { text-align: center; padding: 20rpx 0; }
-.weight-change { font-size: 48rpx; font-weight: 700; color: #e8837c; display: block; margin-bottom: 8rpx; }
+.weight-change { font-size: 48rpx; font-weight: 700; color: var(--primary); display: block; margin-bottom: 8rpx; }
 .weight-detail { font-size: 24rpx; color: #999; }
 
 .advice-list { display: flex; flex-direction: column; gap: 20rpx; }
@@ -387,5 +387,5 @@ onShow(() => {
 .advice-title { font-size: 26rpx; font-weight: 500; color: #333; display: block; margin-bottom: 6rpx; }
 .advice-text { font-size: 24rpx; color: #666; line-height: 1.5; }
 
-.ask-btn { margin-top: 24rpx; background: linear-gradient(135deg, #e8837c, #d4625a); color: #fff; border: none; border-radius: 20rpx; padding: 22rpx; font-size: 28rpx; }
+.ask-btn { margin-top: 24rpx; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border: none; border-radius: 20rpx; padding: 22rpx; font-size: 28rpx; }
 </style>

@@ -234,7 +234,7 @@ function loadMore() {
   justify-content: space-between;
   align-items: center;
   padding: 88rpx 32rpx 20rpx;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 .header-left {
@@ -281,7 +281,7 @@ function loadMore() {
 }
 
 .tab-item.active {
-  color: #e8837c;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -293,7 +293,7 @@ function loadMore() {
   transform: translateX(-50%);
   width: 40rpx;
   height: 6rpx;
-  background: #e8837c;
+  background: var(--primary);
   border-radius: 3rpx;
 }
 
@@ -343,8 +343,8 @@ function loadMore() {
 }
 
 .post-tag {
-  background: #fff0ef;
-  color: #e8837c;
+  background: var(--primary-light);
+  color: var(--primary);
   font-size: 22rpx;
   padding: 6rpx 16rpx;
   border-radius: 16rpx;
@@ -429,7 +429,7 @@ function loadMore() {
   bottom: 180rpx;
   width: 100rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   border-radius: 50%;
   display: flex;
   align-items: center;

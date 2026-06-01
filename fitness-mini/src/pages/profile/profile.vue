@@ -359,7 +359,7 @@ function logout() {
   align-items: center;
   padding: 0;
   padding-bottom: 32rpx;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   position: relative;
   overflow: hidden;
 }
@@ -378,7 +378,7 @@ function logout() {
 .bg-default {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 .header-actions {
@@ -462,7 +462,7 @@ function logout() {
 .bmi-num {
   font-size: 48rpx;
   font-weight: 700;
-  color: #e8837c;
+  color: var(--primary);
   line-height: 1;
 }
 
@@ -521,7 +521,7 @@ function logout() {
 
 .edit-link {
   font-size: 26rpx;
-  color: #e8837c;
+  color: var(--primary);
 }
 
 .field-row {
@@ -554,13 +554,13 @@ function logout() {
 }
 
 .mode-item.active {
-  background: #fff0ef;
-  border: 2rpx solid #f0d0ce;
+  background: var(--primary-light);
+  border: 2rpx solid var(--primary-border);
 }
 
 .mode-emoji { font-size: 36rpx; }
 .mode-name { font-size: 24rpx; color: #666; }
-.mode-item.active .mode-name { color: #e8837c; font-weight: 500; }
+.mode-item.active .mode-name { color: var(--primary); font-weight: 500; }
 
 .menu-card { padding: 0 32rpx; }
 
@@ -578,7 +578,7 @@ function logout() {
 
 .save-btn {
   margin: 24rpx;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   border: none;
   border-radius: 20rpx;

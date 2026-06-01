@@ -181,8 +181,8 @@ function scrollToBottom() {
 }
 
 .tab-item.active {
-  background: #fff0ef;
-  color: #e8837c;
+  background: var(--primary-light);
+  color: var(--primary);
   font-weight: 500;
 }
 
@@ -223,7 +223,7 @@ function scrollToBottom() {
 }
 
 .bubble.user {
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   border-bottom-right-radius: 6rpx;
 }
@@ -257,7 +257,7 @@ function scrollToBottom() {
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: #e8837c;
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;

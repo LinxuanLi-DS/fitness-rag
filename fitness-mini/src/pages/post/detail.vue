@@ -181,8 +181,8 @@ function goUserProfile() {
 }
 
 .post-tag {
-  background: #fff0ef;
-  color: #e8837c;
+  background: var(--primary-light);
+  color: var(--primary);
   font-size: 24rpx;
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
@@ -328,7 +328,7 @@ function goUserProfile() {
 }
 
 .send-text {
-  color: #e8837c;
+  color: var(--primary);
   font-size: 28rpx;
   font-weight: 500;
 }

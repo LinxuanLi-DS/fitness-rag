@@ -119,13 +119,13 @@ function addFriend() {
 
 <style scoped>
 .message-page { min-height: 100vh; background: #fff5f5; }
-.header { padding: 88rpx 32rpx 24rpx; background: linear-gradient(135deg, #e8837c, #d4625a); }
+.header { padding: 88rpx 32rpx 24rpx; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
 .header-title { font-size: 38rpx; font-weight: 600; color: #fff; }
 .msg-tabs { display: flex; background: #fff; border-bottom: 1rpx solid #f0e8e8; }
 .msg-tab { flex: 1; text-align: center; padding: 22rpx 0; font-size: 28rpx; color: #999; position: relative; }
-.msg-tab.active { color: #e8837c; font-weight: 600; }
-.msg-tab.active::after { content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 48rpx; height: 6rpx; background: #e8837c; border-radius: 3rpx; }
-.tab-badge { position: absolute; top: 8rpx; right: 20%; background: #e8837c; color: #fff; font-size: 18rpx; min-width: 28rpx; height: 28rpx; line-height: 28rpx; border-radius: 14rpx; padding: 0 8rpx; text-align: center; }
+.msg-tab.active { color: var(--primary); font-weight: 600; }
+.msg-tab.active::after { content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 48rpx; height: 6rpx; background: var(--primary); border-radius: 3rpx; }
+.tab-badge { position: absolute; top: 8rpx; right: 20%; background: var(--primary); color: #fff; font-size: 18rpx; min-width: 28rpx; height: 28rpx; line-height: 28rpx; border-radius: 14rpx; padding: 0 8rpx; text-align: center; }
 .msg-list { padding: 16rpx 0; }
 .empty-msg { display: flex; flex-direction: column; align-items: center; padding: 100rpx 0; }
 .empty-icon { font-size: 64rpx; margin-bottom: 16rpx; }
@@ -136,16 +136,16 @@ function addFriend() {
 .msg-body { flex: 1; display: flex; flex-direction: column; }
 .msg-top-row { display: flex; justify-content: space-between; align-items: center; }
 .msg-main { font-size: 28rpx; color: #333; margin-bottom: 6rpx; }
-.msg-user { font-weight: 600; color: #e8837c; }
+.msg-user { font-weight: 600; color: var(--primary); }
 .msg-name { font-size: 28rpx; font-weight: 500; color: #333; }
 .msg-context { font-size: 24rpx; color: #999; margin-bottom: 4rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .msg-last { font-size: 24rpx; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .msg-time { font-size: 22rpx; color: #ccc; }
 .msg-type-icon { font-size: 28rpx; margin-left: 12rpx; }
-.unread-badge { background: #e8837c; border-radius: 20rpx; padding: 4rpx 12rpx; margin-left: 12rpx; }
+.unread-badge { background: var(--primary); border-radius: 20rpx; padding: 4rpx 12rpx; margin-left: 12rpx; }
 .unread-num { color: #fff; font-size: 22rpx; font-weight: 500; }
 .add-friend-bar { padding: 24rpx 28rpx; background: #fff; border-bottom: 1rpx solid #f8f0f0; }
-.add-icon { color: #e8837c; font-size: 28rpx; font-weight: 500; }
+.add-icon { color: var(--primary); font-size: 28rpx; font-weight: 500; }
 
 /* AI section - equal level design */
 .ai-section { padding: 24rpx; }
@@ -158,7 +158,7 @@ function addFriend() {
 .ai-big-avatar.green { background: #e8f5e9; }
 .ai-card-info { flex: 1; }
 .ai-card-name { font-size: 32rpx; font-weight: 600; color: #333; display: block; }
-.ai-card-role { font-size: 22rpx; color: #e8837c; display: block; margin: 4rpx 0; }
+.ai-card-role { font-size: 22rpx; color: var(--primary); display: block; margin: 4rpx 0; }
 .ai-card-desc { font-size: 24rpx; color: #999; display: block; }
 .ai-card-right { display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
 .ai-online-dot { width: 16rpx; height: 16rpx; border-radius: 50%; background: #4caf50; }

@@ -208,7 +208,7 @@ function scrollToBottom() {
   padding-bottom: 16rpx;
   padding-left: 16rpx;
   padding-right: 16rpx;
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
 .back-btn {
@@ -274,17 +274,17 @@ function scrollToBottom() {
 
 .suggest-item {
   background: #fff;
-  border: 2rpx solid #f0d0ce;
+  border: 2rpx solid var(--primary-border);
   border-radius: 32rpx;
   padding: 22rpx 28rpx;
   margin-bottom: 16rpx;
   font-size: 26rpx;
-  color: #e8837c;
+  color: var(--primary);
   text-align: center;
 }
 
 .suggest-item:active {
-  background: #fff0ef;
+  background: var(--primary-light);
 }
 
 .message-row {
@@ -321,7 +321,7 @@ function scrollToBottom() {
 }
 
 .bubble.user {
-  background: linear-gradient(135deg, #e8837c, #d4625a);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   border-bottom-right-radius: 6rpx;
 }
@@ -367,7 +367,7 @@ function scrollToBottom() {
 }
 
 .send-btn.active {
-  background: #e8837c;
+  background: var(--primary);
 }
 
 .send-icon {
