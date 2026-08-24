@@ -2,7 +2,7 @@
 
 > A production-style AI application that combines personalized health tracking with retrieval-augmented generation (RAG), LLM streaming, authentication, and full-stack product development.
 
-**Tech:** Python · FastAPI · Vue 3 · TypeScript · PostgreSQL/SQLite · ChromaDB · RAG · Qwen LLM · REST APIs · SSE · JWT · Docker · Nginx
+**Tech:** Python · FastAPI · Vue 3 · TypeScript · PostgreSQL/SQLite · ChromaDB · RAG · Claude API · REST APIs · SSE · JWT · Docker · Nginx
 
 ## Why this project matters
 
@@ -22,7 +22,7 @@ FastAPI Backend
   ├── Health / Cycle Data
   ├── RAG Pipeline
   │     └── ChromaDB Vector Retrieval
-  └── LLM Service (Qwen)
+  └── Claude LLM Service
           ↓
 Grounded Streaming Response
 ```
@@ -63,7 +63,7 @@ Three specialized assistants generate recommendations based on the user's curren
 4. RAG query is constructed
 5. ChromaDB retrieves relevant knowledge
 6. Retrieved context + user context are assembled into the prompt
-7. LLM generates a grounded answer
+7. Claude generates a grounded answer
 8. Response streams to the frontend through SSE
 9. Conversation is persisted for future context
 ```
@@ -101,7 +101,7 @@ The product supports four configurable modes:
 |---|---|
 | Frontend | Vue 3, TypeScript, uni-app |
 | Backend | Python, FastAPI, Pydantic, SQLAlchemy |
-| AI | Qwen LLM, RAG, ChromaDB |
+| AI | Claude API, RAG, ChromaDB, sentence-transformers |
 | Data | SQLite, PostgreSQL-ready architecture |
 | Auth | JWT, WeChat OAuth |
 | APIs | REST, Server-Sent Events |
@@ -139,7 +139,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 cp .env.example .env
-# Add your model/API credentials to .env
+# Add your API credentials to .env
 
 uvicorn api.main:app --reload --port 8000
 ```
