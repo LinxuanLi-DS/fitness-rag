@@ -1,189 +1,156 @@
-# FitHer - Women's Health Companion
+# FitHer — Full-Stack RAG AI Health Assistant
 
-A full-stack women's health application that combines menstrual cycle tracking with AI-powered health recommendations. Built as a WeChat Mini Program with a FastAPI backend.
+> A production-style AI application that combines personalized health tracking with retrieval-augmented generation (RAG), LLM streaming, authentication, and full-stack product development.
 
-## What it does
+**Tech:** Python · FastAPI · Vue 3 · TypeScript · PostgreSQL/SQLite · ChromaDB · RAG · Qwen LLM · REST APIs · SSE · JWT · Docker · Nginx
 
-FitHer helps women track their menstrual cycles and get personalized health advice based on where they are in their cycle. Unlike basic period trackers, it includes:
+## Why this project matters
 
-- AI assistants that give advice tailored to your current cycle phase
-- A community forum where users share experiences
-- Health analytics that track cycle regularity and symptom trends
-- Support for four life stages: period tracking, pregnancy prep, pregnancy, and parenting
+FitHer is more than a chatbot demo. It is an end-to-end AI application that connects user data, retrieval, LLM reasoning, backend APIs, authentication, analytics, and a cross-platform frontend.
 
-## Tech Stack
+The system was designed around a practical product question: **how can an AI assistant use both domain knowledge and personal context to generate more useful, grounded recommendations?**
 
-**Frontend**
-- uni-app (Vue 3 + TypeScript) - compiles to WeChat Mini Program and H5
-- Custom UI components, no heavy framework dependencies
+## Core architecture
 
-**Backend**
-- FastAPI (Python) - async REST API
-- SQLite for development, PostgreSQL for production
-- JWT authentication + WeChat OAuth
-
-**AI/ML**
-- Qwen LLM via Alibaba DashScope API
-- RAG with ChromaDB for grounding responses in verified health information
-- Streaming responses via Server-Sent Events
-
-**Deployment**
-- Docker + Docker Compose
-- Nginx reverse proxy with SSL
-- Tencent Cloud Lighthouse
-
-## Architecture
-
-```
-WeChat Mini Program / PWA
-         |
-    HTTPS/WebSocket
-         |
-    Nginx (SSL termination)
-         |
-    FastAPI Backend
-         |
-    +---------+---------+
-    |         |         |
-  SQLite   ChromaDB   DashScope
-  (data)   (vectors)    (LLM)
+```text
+User
+  ↓
+Vue 3 / TypeScript Client
+  ↓ REST + SSE
+FastAPI Backend
+  ├── Authentication & User Context
+  ├── Health / Cycle Data
+  ├── RAG Pipeline
+  │     └── ChromaDB Vector Retrieval
+  └── LLM Service (Qwen)
+          ↓
+Grounded Streaming Response
 ```
 
-The frontend communicates with the backend through REST endpoints. AI chat uses SSE for streaming. User data (periods, symptoms, daily logs) is stored in SQLite. Health articles and medical guidelines are embedded in ChromaDB for RAG retrieval.
+## Key AI engineering features
 
-## Key Features
+### Retrieval-Augmented Generation
+- Retrieves relevant health articles and guidance from a ChromaDB knowledge base.
+- Combines retrieved context with user-specific information before calling the LLM.
+- Grounds answers in domain knowledge rather than relying on model memory alone.
+- Designed to reduce hallucination risk in a sensitive health-related setting.
 
-**Cycle Tracking**
-- Record period start/end dates
-- Predict next cycle based on history
-- Calendar view with period days highlighted
-- Daily logging: flow, color, symptoms, temperature, weight, water intake
+### Context-aware AI assistants
+Three specialized assistants generate recommendations based on the user's current context:
+- **Fitness Coach** — exercise guidance
+- **Nutritionist** — nutrition recommendations
+- **Health Manager** — general wellness and symptom guidance
 
-**AI Health Assistants**
-Three specialized personas:
-- Fitness coach - exercise recommendations based on cycle phase
-- Nutritionist - diet advice tailored to current phase
-- Health manager - overall wellness and symptom management
+### Streaming LLM responses
+- FastAPI serves AI responses through Server-Sent Events (SSE).
+- The frontend renders model output incrementally for a lower-latency chat experience.
+- Handles partial streaming responses and cross-platform client limitations.
 
-Each assistant uses RAG to ground responses in verified health information, reducing hallucination risk for medical advice.
+### Full-stack integration
+- FastAPI async REST backend
+- Vue 3 + TypeScript frontend through uni-app
+- JWT authentication and WeChat OAuth support
+- SQLite for development and PostgreSQL-ready production persistence
+- Docker / Docker Compose deployment workflow
+- Nginx reverse proxy with SSL support
 
-**Health Analytics**
-- Cycle regularity scoring (0-100)
-- Symptom trend tracking over time
-- Weight trends
-- Personalized AI recommendations based on data
+## Example AI request flow
 
-**Community Forum**
-- Post creation with images
-- Comments and likes
-- Topic-based filtering (period, fitness, diet, skincare, mood)
-- User profiles with follower system
-
-**Four Life Modes**
-The app adapts to different life stages:
-1. Period mode - standard cycle tracking
-2. Pregnancy prep - ovulation tracking, supplement reminders
-3. Pregnancy - week-by-week development, checkup records, kick counting
-4. Parenting - feeding logs, sleep tracking, growth milestones
-
-## Technical Decisions
-
-**Why uni-app instead of native?**
-Single codebase for WeChat Mini Program and H5. The target users are in China where WeChat dominates, so Mini Program is essential. uni-app lets us compile to both platforms without maintaining separate codebases.
-
-**Why FastAPI?**
-Native async support for AI streaming, automatic OpenAPI docs, and Pydantic validation. It's also one of the fastest Python frameworks, which matters when handling concurrent AI requests.
-
-**Why RAG instead of fine-tuning?**
-Health information changes frequently. With RAG, we can update the knowledge base without retraining. It also provides transparency - we can show users which sources informed the AI's response. Most importantly, it reduces hallucination risk for medical advice.
-
-**Why SQLite for development?**
-Zero configuration, single file, easy to share and backup. For a solo developer project, it removes database setup friction. PostgreSQL is used in production for concurrent access and better performance.
-
-## Data Flow Examples
-
-**User records a period:**
-1. User taps "Record period start" button
-2. Frontend validates and sends POST to `/api/period/records`
-3. Backend writes to SQLite
-4. Backend calculates next prediction based on historical cycles
-5. Frontend updates calendar and analytics dashboard
-
-**AI chat interaction:**
-1. User sends message in chat
-2. Frontend loads last 10 messages for context
-3. Frontend sends message + history to `/api/chat/stream`
-4. Backend builds RAG query with user's cycle phase and message
-5. ChromaDB retrieves relevant health articles
-6. Backend constructs prompt with retrieved context
-7. Qwen generates response, streamed back via SSE
-8. Frontend displays tokens in real-time
-9. Message saved to chat history
-
-**Health score calculation:**
-1. Load all period records from database
-2. Calculate cycle lengths (days between period starts)
-3. Compute variance of cycle lengths
-4. Convert to regularity score (lower variance = higher score)
-5. Calculate average period duration score
-6. Weighted combination → final score (0-100)
-7. Generate AI recommendations based on score and trends
-
-## Project Structure
-
+```text
+1. User sends a question
+2. Backend loads recent conversation context
+3. System identifies current user/cycle context
+4. RAG query is constructed
+5. ChromaDB retrieves relevant knowledge
+6. Retrieved context + user context are assembled into the prompt
+7. LLM generates a grounded answer
+8. Response streams to the frontend through SSE
+9. Conversation is persisted for future context
 ```
+
+## Product features
+
+### Health & cycle tracking
+- Period start/end tracking
+- Cycle prediction based on historical records
+- Daily symptom, temperature, weight, flow, and hydration logging
+- Health analytics and trend visualization
+
+### Personalized AI
+- Three role-specific AI assistants
+- User-context-aware recommendations
+- Retrieval-grounded answers
+- Streaming chat experience
+
+### Community & account system
+- User profiles
+- Posts, comments, and likes
+- Topic-based filtering
+- Authentication and account management
+
+### Multi-stage experience
+The product supports four configurable modes:
+1. Period tracking
+2. Pregnancy preparation
+3. Pregnancy
+4. Parenting
+
+## Tech stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | Vue 3, TypeScript, uni-app |
+| Backend | Python, FastAPI, Pydantic, SQLAlchemy |
+| AI | Qwen LLM, RAG, ChromaDB |
+| Data | SQLite, PostgreSQL-ready architecture |
+| Auth | JWT, WeChat OAuth |
+| APIs | REST, Server-Sent Events |
+| Deployment | Docker, Docker Compose, Nginx |
+
+## Repository structure
+
+```text
 fitness-rag/
-├── api/                    # FastAPI backend
-│   ├── main.py            # App entry point
-│   ├── routers/           # API endpoints
-│   │   ├── users.py       # Auth + user management
-│   │   ├── chat.py        # AI chat streaming
-│   │   ├── period.py      # Period tracking
-│   │   └── posts.py       # Forum posts
-│   ├── models/            # SQLAlchemy models + Pydantic schemas
-│   └── services/          # Business logic (AI, RAG)
-│
-├── fitness-mini/          # uni-app frontend
-│   ├── src/
-│   │   ├── pages/         # Vue components
-│   │   │   ├── index/     # Forum home
-│   │   │   ├── period/    # Cycle tracking
-│   │   │   ├── chat/      # AI assistants
-│   │   │   ├── analysis/  # Health analytics
-│   │   │   └── message/   # Notifications
-│   │   ├── utils/         # API client, helpers
-│   │   └── static/        # Icons, images
-│   └── dist/              # Compiled output
-│
-├── data/                  # SQLite database, ChromaDB
-├── docs/                  # Documentation, screenshots
-└── docker/                # Docker configs
+├── api/                  # FastAPI backend
+│   ├── routers/          # API endpoints
+│   ├── models/           # DB models and schemas
+│   └── services/         # AI / RAG business logic
+├── fitness-mini/         # Vue 3 + TypeScript client
+├── frontend/             # Browser-facing frontend assets
+├── data/                 # Local development data / vector store config
+├── scripts/              # Utility scripts
+├── src/                  # Supporting application modules
+├── test_api.py           # API tests
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
-## Setup Instructions
+## Local setup
 
 ### Backend
 
 ```bash
+git clone https://github.com/LinxuanLi-DS/fitness-rag.git
 cd fitness-rag
+
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Configure environment
 cp .env.example .env
-# Add your DashScope API key to .env
+# Add your model/API credentials to .env
 
-# Run migrations (creates SQLite database)
-python -m alembic upgrade head
-
-# Start server
 uvicorn api.main:app --reload --port 8000
 ```
 
-API docs available at http://localhost:8000/docs
+FastAPI documentation is available at:
 
-### Frontend (Mini Program)
+```text
+http://localhost:8000/docs
+```
+
+### Frontend
 
 ```bash
 cd fitness-mini
@@ -191,94 +158,69 @@ npm install
 npm run build:mp-weixin
 ```
 
-Import `dist/build/mp-weixin` into WeChat Developer Tools.
+## Engineering decisions
 
-### Frontend (PWA - browser testing)
+### Why RAG instead of only prompting the LLM?
+A general-purpose LLM can generate plausible but unsupported health information. RAG provides external context at inference time, allowing knowledge to be updated independently from the model while improving grounding.
 
-```bash
-cd fitness-rag
-# Make sure backend is running on port 8000
-# Open frontend/index.html in browser
-```
+### Why FastAPI?
+FastAPI provides async request handling, Pydantic validation, automatic OpenAPI documentation, and a clean path for streaming AI responses.
 
-## Current Status
+### Why separate user context from retrieved knowledge?
+Personalization and factual grounding solve different problems. User data provides **personal context**, while retrieval provides **domain context**. The prompt assembly layer combines both before generation.
 
-**Working:**
-- User authentication (WeChat + username/password)
-- Period tracking with calendar view
-- AI chat with three personas (streaming responses)
-- Health analytics and scoring
-- Forum posts (create, comment, like)
-- Daily logging (flow, color, symptoms, temperature, weight, water)
-- Four life modes with mode-specific features
+### Why SSE for AI chat?
+LLM responses can take several seconds to complete. Streaming improves perceived latency and gives the application a more responsive conversational experience.
 
-**In Progress:**
-- Push notifications (period reminders)
-- Image upload to cloud storage
-- Real-time chat between users
-- Data export (PDF reports)
+## What I learned
 
-**Planned:**
-- Wearable device integration (Apple Watch, Fitbit)
-- Partner sharing mode
-- Multi-language support (English, Spanish)
-- Telehealth integration
+Building FitHer highlighted several real-world AI engineering challenges:
 
-## Lessons Learned
+- **RAG quality depends on context assembly, not just vector search.** Retrieval results need to be filtered and combined with the right user context.
+- **AI output needs guardrails in sensitive domains.** Grounding, disclaimers, and escalation paths matter as much as prompt quality.
+- **Streaming adds systems complexity.** Browser and Mini Program clients behave differently, so partial-response handling must be robust.
+- **Persistence should be designed early.** Moving from local-only state to backend storage changed the architecture significantly.
+- **AI products are end-to-end systems.** Model calls are only one piece; APIs, databases, UX, authentication, deployment, and evaluation all matter.
 
-**Data persistence matters early**
-Started with localStorage for everything. Had to migrate to backend storage when users switched devices and lost data. Lesson: plan for multi-device from the start.
+## Current status
 
-**AI streaming is harder than expected**
-SSE works in browsers but WeChat Mini Program has limitations. Had to implement chunked responses and handle partial JSON parsing.
+**Implemented**
+- Authentication
+- Health / cycle tracking
+- AI chat with specialized assistants
+- RAG retrieval
+- Streaming responses
+- Health analytics
+- Community features
+- Daily logging
 
-**Cycle prediction is tricky**
-Simple "average cycle length" doesn't work well. Users have irregular cycles. Currently using weighted average with recency bias, but need to explore time series models.
+**Planned / in progress**
+- Push notifications
+- Cloud image storage
+- Data export
+- Additional evaluation and safety guardrails
+- Wearable-device integration
 
-**Health advice needs guardrails**
-AI can give dangerous medical advice if not constrained. RAG helps, but also need explicit disclaimers and escalation to "see a doctor" for serious symptoms.
+## Portfolio relevance
 
-**WeChat Mini Program审核 is painful**
-Health category requires additional documentation. First submission rejected. Had to add privacy policy, user agreement, and medical disclaimer before approval.
+This project demonstrates hands-on experience with:
 
-## Future Work
+- LLM application development
+- RAG system design
+- AI workflow orchestration
+- REST API and backend engineering
+- Structured user data + AI integration
+- Streaming model responses
+- Full-stack product development
+- Responsible AI considerations
+- Deployment-oriented architecture
 
-**Short term (1-2 months)**
-- Deploy to production server with SSL
-- Get 10-20 beta testers
-- Collect feedback and iterate
-- Submit to WeChat Mini Program review
+## Author
 
-**Medium term (3-6 months)**
-- Add push notifications
-- Implement data export for doctor visits
-- Build admin dashboard for user analytics
-- Explore partnerships with health organizations
-
-**Long term (6-12 months)**
-- Native iOS/Android apps
-- Wearable device integration
-- Telehealth features
-- Expansion to other regions (US, Europe)
-
-## Why I Built This
-
-I noticed most period tracking apps on the market are just digital calendars - they record data but don't help you understand what it means. I wanted to build something that actually uses that data to give personalized advice.
-
-This started as a side project to learn full-stack development and AI integration. It grew into something more substantial as I realized the gap between "tracking data" and "getting actionable insights" is real.
-
-The project also gave me hands-on experience with RAG, streaming responses, cross-platform development, and the realities of deploying to WeChat's ecosystem.
-
-## Contact
-
-**Developer**: Linxuan Li  
-**Email**: 779182617@qq.com  
-**GitHub**: github.com/LinxuanLi-DS
-
-## License
-
-MIT - see LICENSE file
+**Linxuan Li**  
+MS in Data Science, Northeastern University — Silicon Valley  
+GitHub: [LinxuanLi-DS](https://github.com/LinxuanLi-DS)
 
 ---
 
-Built as a personal project to learn full-stack development, AI integration, and product development. Not intended as medical advice - always consult healthcare professionals for medical decisions.
+*FitHer is an educational and portfolio project and is not intended to provide medical diagnosis or replace professional medical advice.*
