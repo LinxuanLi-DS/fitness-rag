@@ -2,15 +2,15 @@
 
 > A production-style AI application that combines personalized health tracking with retrieval-augmented generation (RAG), LLM streaming, authentication, and full-stack product development.
 
-**Tech:** Python · FastAPI · Vue 3 · TypeScript · PostgreSQL/SQLite · ChromaDB · RAG · Claude API · REST APIs · SSE · JWT · Docker · Nginx
+**Tech:** Python · FastAPI · Vue 3 · TypeScript · SQLite/PostgreSQL · ChromaDB · sentence-transformers · Qwen · REST APIs · SSE · JWT
 
-## Why this project matters
+## Overview
 
-FitHer is more than a chatbot demo. It is an end-to-end AI application that connects user data, retrieval, LLM reasoning, backend APIs, authentication, analytics, and a cross-platform frontend.
+FitHer is an end-to-end AI application that connects user data, retrieval, LLM generation, backend APIs, authentication, analytics, and a cross-platform frontend.
 
-The system was designed around a practical product question: **how can an AI assistant use both domain knowledge and personal context to generate more useful, grounded recommendations?**
+The core product question is simple: **how can an AI assistant combine domain knowledge with personal context to generate more useful and grounded recommendations?**
 
-## Core architecture
+## Architecture
 
 ```text
 User
@@ -21,8 +21,9 @@ FastAPI Backend
   ├── Authentication & User Context
   ├── Health / Cycle Data
   ├── RAG Pipeline
-  │     └── ChromaDB Vector Retrieval
-  └── Claude LLM Service
+  │     ├── ChromaDB
+  │     └── all-MiniLM-L6-v2 embeddings
+  └── Qwen LLM via DashScope OpenAI-compatible API
           ↓
 Grounded Streaming Response
 ```
@@ -30,42 +31,44 @@ Grounded Streaming Response
 ## Key AI engineering features
 
 ### Retrieval-Augmented Generation
-- Retrieves relevant health articles and guidance from a ChromaDB knowledge base.
-- Combines retrieved context with user-specific information before calling the LLM.
-- Grounds answers in domain knowledge rather than relying on model memory alone.
-- Designed to reduce hallucination risk in a sensitive health-related setting.
+- Retrieves relevant food and exercise knowledge from ChromaDB.
+- Uses sentence-transformer embeddings for semantic retrieval.
+- Combines retrieved knowledge with user-specific context before generation.
+- Separates domain grounding from personalization instead of relying on the LLM alone.
 
 ### Context-aware AI assistants
-Three specialized assistants generate recommendations based on the user's current context:
-- **Fitness Coach** — exercise guidance
-- **Nutritionist** — nutrition recommendations
-- **Health Manager** — general wellness and symptom guidance
+The application includes three specialized assistants:
+- **Fitness Coach** — strength training and exercise guidance
+- **Nutritionist** — nutrition and diet recommendations
+- **Health Manager** — sleep, stress, lifestyle, and general wellness guidance
+
+### Multi-turn context
+- Recent conversation history is included in prompt construction.
+- User profile information is merged with current request context.
+- The system can adapt recommendations to fitness level, goals, dietary preferences, and cycle-related information.
 
 ### Streaming LLM responses
-- FastAPI serves AI responses through Server-Sent Events (SSE).
-- The frontend renders model output incrementally for a lower-latency chat experience.
-- Handles partial streaming responses and cross-platform client limitations.
+- FastAPI exposes an SSE streaming endpoint.
+- Qwen responses are streamed incrementally to the client.
+- The frontend handles partial model output for a more responsive chat experience.
 
 ### Full-stack integration
-- FastAPI async REST backend
+- FastAPI backend with Pydantic and SQLAlchemy
 - Vue 3 + TypeScript frontend through uni-app
 - JWT authentication and WeChat OAuth support
-- SQLite for development and PostgreSQL-ready production persistence
-- Docker / Docker Compose deployment workflow
-- Nginx reverse proxy with SSL support
+- SQLite for local development with PostgreSQL support
+- REST APIs for user, period, daily log, survey, feedback, vision, and chat workflows
 
-## Example AI request flow
+## AI request flow
 
 ```text
 1. User sends a question
-2. Backend loads recent conversation context
-3. System identifies current user/cycle context
-4. RAG query is constructed
-5. ChromaDB retrieves relevant knowledge
-6. Retrieved context + user context are assembled into the prompt
-7. Claude generates a grounded answer
-8. Response streams to the frontend through SSE
-9. Conversation is persisted for future context
+2. Backend resolves authenticated user context
+3. Frontend and database profile information are merged
+4. ChromaDB retrieves relevant knowledge
+5. Retrieved context + user context + recent chat history are assembled
+6. Qwen generates the response
+7. Tokens stream back through SSE
 ```
 
 ## Product features
@@ -77,23 +80,22 @@ Three specialized assistants generate recommendations based on the user's curren
 - Health analytics and trend visualization
 
 ### Personalized AI
-- Three role-specific AI assistants
+- Three specialized AI assistants
 - User-context-aware recommendations
-- Retrieval-grounded answers
+- RAG-grounded generation
+- Multi-turn conversation context
 - Streaming chat experience
 
-### Community & account system
-- User profiles
-- Posts, comments, and likes
-- Topic-based filtering
-- Authentication and account management
+### User & product workflows
+- Authentication and profile management
+- WeChat login support
+- Feedback and survey collection
+- Community-facing product components
+- Multiple health/life-stage modes
 
-### Multi-stage experience
-The product supports four configurable modes:
-1. Period tracking
-2. Pregnancy preparation
-3. Pregnancy
-4. Parenting
+## User research
+
+The product direction was informed by a small 13-response user survey. The strongest signals were persistent memory, cycle-aware recommendations, and proactive guidance. This helped prioritize the product around **personal context + retrieval + AI assistance**, rather than building a generic chatbot.
 
 ## Tech stack
 
@@ -101,25 +103,24 @@ The product supports four configurable modes:
 |---|---|
 | Frontend | Vue 3, TypeScript, uni-app |
 | Backend | Python, FastAPI, Pydantic, SQLAlchemy |
-| AI | Claude API, RAG, ChromaDB, sentence-transformers |
-| Data | SQLite, PostgreSQL-ready architecture |
+| LLM | Qwen via Alibaba Cloud DashScope OpenAI-compatible API |
+| RAG | ChromaDB, sentence-transformers, all-MiniLM-L6-v2 |
+| Data | SQLite, PostgreSQL |
 | Auth | JWT, WeChat OAuth |
 | APIs | REST, Server-Sent Events |
-| Deployment | Docker, Docker Compose, Nginx |
 
 ## Repository structure
 
 ```text
-fitness-rag/
+FitHer-RAG-AI-Assistant/
 ├── api/                  # FastAPI backend
-│   ├── routers/          # API endpoints
-│   ├── models/           # DB models and schemas
-│   └── services/         # AI / RAG business logic
+│   ├── routers/          # User, chat, period, feedback, etc.
+│   └── models/           # SQLAlchemy models + Pydantic schemas
 ├── fitness-mini/         # Vue 3 + TypeScript client
 ├── frontend/             # Browser-facing frontend assets
-├── data/                 # Local development data / vector store config
-├── scripts/              # Utility scripts
-├── src/                  # Supporting application modules
+├── data/                 # Product research / local data assets
+├── scripts/              # Data and utility scripts
+├── src/                  # RAG pipeline and supporting modules
 ├── test_api.py           # API tests
 ├── requirements.txt
 ├── .env.example
@@ -128,29 +129,27 @@ fitness-rag/
 
 ## Local setup
 
-### Backend
-
 ```bash
-git clone https://github.com/LinxuanLi-DS/fitness-rag.git
-cd fitness-rag
+git clone https://github.com/LinxuanLi-DS/FitHer-RAG-AI-Assistant.git
+cd FitHer-RAG-AI-Assistant
 
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
 cp .env.example .env
-# Add your API credentials to .env
+# Add your local credentials to .env
 
 uvicorn api.main:app --reload --port 8000
 ```
 
-FastAPI documentation is available at:
+FastAPI documentation:
 
 ```text
 http://localhost:8000/docs
 ```
 
-### Frontend
+Frontend:
 
 ```bash
 cd fitness-mini
@@ -160,60 +159,41 @@ npm run build:mp-weixin
 
 ## Engineering decisions
 
-### Why RAG instead of only prompting the LLM?
-A general-purpose LLM can generate plausible but unsupported health information. RAG provides external context at inference time, allowing knowledge to be updated independently from the model while improving grounding.
+### Why RAG?
+RAG allows external knowledge to be retrieved at inference time and updated independently of the model. It also makes the generation pipeline easier to inspect than relying only on model memory.
 
-### Why FastAPI?
-FastAPI provides async request handling, Pydantic validation, automatic OpenAPI documentation, and a clean path for streaming AI responses.
+### Why separate personal context from retrieved knowledge?
+They solve different problems. User data provides **personal context**; retrieval provides **domain context**. Prompt assembly combines both before generation.
 
-### Why separate user context from retrieved knowledge?
-Personalization and factual grounding solve different problems. User data provides **personal context**, while retrieval provides **domain context**. The prompt assembly layer combines both before generation.
-
-### Why SSE for AI chat?
-LLM responses can take several seconds to complete. Streaming improves perceived latency and gives the application a more responsive conversational experience.
+### Why FastAPI + SSE?
+FastAPI provides typed request validation and a clean backend API layer, while SSE reduces perceived latency by streaming model output to the client as it is generated.
 
 ## What I learned
 
-Building FitHer highlighted several real-world AI engineering challenges:
-
-- **RAG quality depends on context assembly, not just vector search.** Retrieval results need to be filtered and combined with the right user context.
-- **AI output needs guardrails in sensitive domains.** Grounding, disclaimers, and escalation paths matter as much as prompt quality.
-- **Streaming adds systems complexity.** Browser and Mini Program clients behave differently, so partial-response handling must be robust.
-- **Persistence should be designed early.** Moving from local-only state to backend storage changed the architecture significantly.
-- **AI products are end-to-end systems.** Model calls are only one piece; APIs, databases, UX, authentication, deployment, and evaluation all matter.
+- **RAG quality depends on context assembly, not only vector search.**
+- **Personalization and factual grounding should be treated as separate system components.**
+- **Streaming adds real systems complexity across different clients.**
+- **AI products are end-to-end systems:** model calls, APIs, databases, authentication, UX, and evaluation all matter.
+- **Sensitive-domain AI needs guardrails and clear product boundaries.**
 
 ## Current status
 
 **Implemented**
 - Authentication
+- User profile context
 - Health / cycle tracking
-- AI chat with specialized assistants
 - RAG retrieval
-- Streaming responses
-- Health analytics
-- Community features
-- Daily logging
+- Three specialized AI assistants
+- Multi-turn context
+- SSE streaming
+- Analytics and daily logging
+- Survey and feedback workflows
 
-**Planned / in progress**
-- Push notifications
-- Cloud image storage
-- Data export
-- Additional evaluation and safety guardrails
-- Wearable-device integration
-
-## Portfolio relevance
-
-This project demonstrates hands-on experience with:
-
-- LLM application development
-- RAG system design
-- AI workflow orchestration
-- REST API and backend engineering
-- Structured user data + AI integration
-- Streaming model responses
-- Full-stack product development
-- Responsible AI considerations
-- Deployment-oriented architecture
+**Next improvements**
+- Stronger automated evaluation for RAG quality
+- Better safety / escalation guardrails
+- Cloud deployment hardening
+- Additional integrations and notifications
 
 ## Author
 
@@ -223,4 +203,4 @@ GitHub: [LinxuanLi-DS](https://github.com/LinxuanLi-DS)
 
 ---
 
-*FitHer is an educational and portfolio project and is not intended to provide medical diagnosis or replace professional medical advice.*
+*FitHer is an educational and portfolio project. It is not intended to provide medical diagnosis or replace professional medical advice.*
